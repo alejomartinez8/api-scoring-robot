@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { model } = require('./account.model');
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
@@ -9,12 +8,16 @@ const schema = new Schema({
   created: { type: Date, default: Date.now },
   createdByIp: String,
   revoked: Date,
-  revokeddByIp: String,
+  revokedByIp: String,
   replacedByToken: String
 });
 
-schema.virtual('isExpired').get(() => {
+schema.virtual('isExpired').get(function () {
+  return Date.now() >= this.expires;
+});
+
+schema.virtual('isActive').get(function () {
   return !this.revoked && !this.isExpired;
 });
 
-module.exposts = mongoose.model('RefreshToken', schema);
+module.exports = mongoose.model('RefreshToken', schema);

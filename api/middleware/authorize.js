@@ -13,7 +13,7 @@ function authorize(roles = []) {
   }
 
   return [
-    // authenticate JWT token and attach user to reques object (req.user)
+    // authenticate JWT token and attach user to request object (req.user)
     jwt({ secret, algorithms: ['HS256'] }),
 
     // athorized based on user role
@@ -28,8 +28,7 @@ function authorize(roles = []) {
 
       // authentication and authorization successful
       req.user.role = account.role;
-      req.user.ownsToken = (token) =>
-        !!refreshTokens.find((x) => x.token === token);
+      req.user.ownsToken = (token) => !!refreshTokens.find((x) => x.token === token);
       next();
     }
   ];

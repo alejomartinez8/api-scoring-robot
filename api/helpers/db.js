@@ -9,15 +9,12 @@ const connectionOptions = {
   useFindAndModify: false
 };
 
-mongoose.connect(
-  process.env.MONGODB_URI || config.connectionString,
-  connectionOptions
-);
+mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionOptions);
 mongoose.Promise = global.Promise;
 
 module.exports = {
-  Account: require('accounts/account.model'),
-  RefreshToken: require('accounts/refresh-token.model'),
+  Account: require('../models/accounts/account.model'),
+  RefreshToken: require('../models/accounts/refresh-token.model'),
   isValidId
 };
 

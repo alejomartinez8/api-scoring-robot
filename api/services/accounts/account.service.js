@@ -19,7 +19,7 @@ module.exports = {
   validateResetToken,
   resetPassword,
 
-  // get All, getById,
+  // Get accounts, one, create, update, delete
   getAll,
   getById,
   create,
@@ -27,14 +27,12 @@ module.exports = {
   delete: _delete
 };
 
-/******************************************************************************
- * @description Authentication Service
- * @param       email
- * @param       password
- * @param       ipAdress
+/**
+ * Authenticate Service
  */
 async function authenticate({ email, password, ipAddress }) {
   const account = await db.Account.findOne({ email });
+  console.log(account);
 
   if (!account || !account.isVerified || !bcrypt.compareSync(password, account.passwordHash)) {
     throw 'Email or password is incorrect';
@@ -55,9 +53,8 @@ async function authenticate({ email, password, ipAddress }) {
   };
 }
 
-/******************************************************************************
- *
- * @param {*} param0
+/**
+ * Refresh Token Service
  */
 async function refreshToken({ token, ipAddress }) {
   const refreshToken = await getRefreshToken(token);
@@ -82,10 +79,6 @@ async function refreshToken({ token, ipAddress }) {
   };
 }
 
-/******************************************************************************
- *
- * @param {*} param0
- */
 async function revokeToken({ token, ipAddress }) {
   const refreshToken = await getRefreshToken(token);
 
@@ -95,9 +88,8 @@ async function revokeToken({ token, ipAddress }) {
   await refreshToken.save();
 }
 
-/******************************************************************************
- * @description Register an user and verify if email exist and send an email
- * notifiying this, if not, send a token to verify again
+/**
+ * Register an user to create an account
  */
 async function register(params, origin) {
   // validate
@@ -125,8 +117,8 @@ async function register(params, origin) {
   await sendVerificationEmail(account, origin);
 }
 
-/******************************************************************************
- * @description  With the token sent to email, verify the user to access to the API
+/**
+ * With the token sent to email, verify the user to access to the API
  */
 async function verifyEmail({ token }) {
   const account = await db.Account.findOne({ verificationToken: token });
@@ -138,10 +130,9 @@ async function verifyEmail({ token }) {
   await account.save();
 }
 
-/******************************************************************************
- * @description find email on DB if exist, if yes
+/**
+ * Find email on DB if exist, if yes send and email with reset Token
  */
-
 async function forgotPassword({ email }, origin) {
   const account = await db.Account.findOne({ email });
 
@@ -159,8 +150,8 @@ async function forgotPassword({ email }, origin) {
   await sendPasswordResetEmail(account, origin);
 }
 
-/******************************************************************************
- * @description   Find on DB the token in 'resetToken' field
+/**
+ * Find on DB the token in 'resetToken' field
  */
 async function validateResetToken({ token }) {
   const account = await db.Account.findOne({
@@ -171,10 +162,8 @@ async function validateResetToken({ token }) {
   if (!account) throw 'Invalid token';
 }
 
-/******************************************************************************
- *
- * @param {*} param0
- */
+//
+//
 async function resetPassword({ token, password }) {
   const account = await db.Account.findOne({
     'resetToken.token': token,
@@ -190,24 +179,24 @@ async function resetPassword({ token, password }) {
   await account.save();
 }
 
-/******************************************************************************
- *
+/**
+ * Get All accounts
  */
 async function getAll() {
   const accounts = await db.Account.find();
-  return accounts.map((x) => basicDetails(x));
+  return accounts.map((account) => basicDetails(account));
 }
 
-/******************************************************************************
- *
+/**
+ * Get account with id
  */
 async function getById(id) {
   const account = await getAccount(id);
   return basicDetails(account);
 }
 
-/******************************************************************************
- *
+/**
+ * Create an account
  */
 async function create(params) {
   // validate
@@ -227,10 +216,8 @@ async function create(params) {
   return basicDetails(account);
 }
 
-/******************************************************************************
- *
- * @param {*} id
- * @param {*} params
+/**
+ * Update account by id
  */
 async function update(id, params) {
   const account = await getAccount(id);
@@ -254,18 +241,16 @@ async function update(id, params) {
 }
 
 /**
- *
- * @param {*} id
+ * Delete Account
  */
 async function _delete(id) {
   const account = await getAccount(id);
   await account.remove();
 }
 
-/******************************************************************************
- * helper functions
+/**
+ * get Account with id
  */
-
 async function getAccount(id) {
   if (!db.isValidId(id)) throw 'Account not found';
   const account = await db.Account.findById(id);
@@ -273,6 +258,9 @@ async function getAccount(id) {
   return account;
 }
 
+/**
+ * Find token in RefreshToken DB
+ */
 async function getRefreshToken(token) {
   const refreshToken = await db.RefreshToken.findOne({ token }).populate('account');
   if (!refreshToken || !refreshToken.isActive) throw 'Invalid token';
@@ -280,22 +268,25 @@ async function getRefreshToken(token) {
 }
 
 /**
- * @description function has password with bcrypt
- * @param {*} password
+ * Hash password with bcrypt
  */
 function hash(password) {
   return bcrypt.hashSync(password, 10);
 }
 
+/**
+ * Create a jwt token containing the account id that expires in 15 minutes
+ */
 function generateJwtToken(account) {
-  // create a jwt token containing the account id that expires in 15 minutes
   return jwt.sign({ sub: account.id, id: account.id }, config.secret, {
     expiresIn: '15m'
   });
 }
 
+/**
+ * Create a refresh token that expires in 7 days
+ */
 function generateRefreshToken(account, ipAddress) {
-  // create a refresh token that expires in 7 days
   return new db.RefreshToken({
     account: account.id,
     token: randomTokenString(),
@@ -311,6 +302,9 @@ function randomTokenString() {
   return crypto.randomBytes(40).toString('hex');
 }
 
+/**
+ * Return Basic Details of Account (filter by BD)
+ */
 function basicDetails(account) {
   const { id, title, firstName, lastName, email, role, created, updated, isVerified } = account;
   return {
@@ -326,9 +320,8 @@ function basicDetails(account) {
   };
 }
 
-/******************************************************************************
- * @description Send an Email with the verification token stored on Data Base
- * in field verificationToken, this field is only stored when the user is not verified
+/**
+ * Send an Email with the verification token stored on Data Base in field verificationToken, this field is only stored when the user is not verified
  */
 async function sendVerificationEmail(account, origin) {
   let message;
@@ -350,8 +343,8 @@ async function sendVerificationEmail(account, origin) {
   });
 }
 
-/******************************************************************************
- * @description Send an Email for an user already registered whit the link of forgot password
+/**
+ * Send an Email for an user already registered whit the link of forgot password
  */
 async function sendAlreadyRegisteredEmail(email, origin) {
   let message;
@@ -370,8 +363,8 @@ async function sendAlreadyRegisteredEmail(email, origin) {
   });
 }
 
-/******************************************************************************
- * @description Send an email with a token to reset password when user forgot it
+/**
+ * Send an email with a token to reset password when user forgot it
  */
 
 async function sendPasswordResetEmail(account, origin) {

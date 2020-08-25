@@ -4,7 +4,12 @@ const Joi = require('joi');
 const validateRequest = require('middleware/validate-request');
 const authorize = require('middleware/authorize');
 const Role = require('helpers/role');
-const accountService = require('./account.service');
+const accountService = require('../../services/accounts/account.service');
+
+// Login - authenticate routen
+router.post('/authenticate', authenticateSchema, authenticate);
+router.post('/refresh-token', refreshToken);
+router.post('/revoke-token', authorize(), revokeTokenSchema, revokeToken);
 
 // Register, verify email, forgot password routes
 router.post('/register', registerSchema, register);
@@ -12,11 +17,6 @@ router.post('/verify-email', verifyEmailSchema, verifyEmail);
 router.post('/forgot-password', forgotPasswordSchema, forgotPassword);
 router.post('/validate-reset-token', validateResetTokenSchema, validateResetToken);
 router.post('/reset-password', resetPasswordSchema, resetPassword);
-
-// Login - authenticate routen
-router.post('/authenticate', authenticateSchema, authenticate);
-router.post('/refresh-token', refreshToken);
-router.post('/revoke-token', authorize(), revokeTokenSchema, revokeToken);
 
 // Authorize - User roles
 router.get('/', authorize(Role.Admin), getAll);
@@ -27,11 +27,11 @@ router.delete('/:id', authorize(), _delete);
 
 module.exports = router;
 
-/******************************************************************************
- * @route /accounts/authorize
- * @desc  Authenticate Users route
+/**
+ * @route   /accounts/authenticate
+ * @desc    Authenticate user with email and password
+ * @access  Public
  */
-
 function authenticateSchema(req, res, next) {
   const schema = Joi.object({
     email: Joi.string().required(),
@@ -89,12 +89,8 @@ function revokeToken(req, res, next) {
     .catch(next);
 }
 
-/******************************************************************************
- * @route   POST accounts/register
- * @desc    Register an user and send and email to verifiy the account,
- * the firt User is an Admin Role, the other are just User,
- * if the email exist send and email again
- * @access  Public
+/**
+ * Register an user and send and email to verifiy the account,the firt User is an Admin Role, the other are just User, if the email exist send and email again
  */
 
 function registerSchema(req, res, next) {
@@ -121,7 +117,7 @@ function register(req, res, next) {
     .catch(next);
 }
 
-/******************************************************************************
+/**
  * @route   /accounts/verify-email
  * @desc    Verify email with token sent to email
  * @access  Private
@@ -141,7 +137,7 @@ function verifyEmail(req, res, next) {
     .catch(next);
 }
 
-/******************************************************************************
+/**
  * @route   /accounts/forgot-password
  * @desc    Send a token for 24 hours of validate to reset the password
  */
@@ -164,9 +160,9 @@ function forgotPassword(req, res, next) {
     .catch(next);
 }
 
-/******************************************************************************
- * Validate the token sent to email
- * @route /accounts/validate-reset-token
+/**
+ * @route   /accounts/validate-reset-token
+ * @desc    Validate the token sent to email
  */
 
 function resetPasswordSchema(req, res, next) {
@@ -185,7 +181,7 @@ function validateResetToken(req, res, next) {
     .catch(next);
 }
 
-/******************************************************************************
+/**
  * @route   /reset-password
  * @desc    Validate th reset token sent to email to create new password
  */
@@ -204,8 +200,9 @@ function resetPassword(req, res, next) {
     .catch(next);
 }
 
-/********************************************************************************
- * Get all users-account
+/**
+ * @route GET /accounts/
+ * @desc  Get all users-account
  */
 function getAll(req, res, next) {
   accountService
@@ -214,6 +211,10 @@ function getAll(req, res, next) {
     .catch(next);
 }
 
+/**
+ * @route GET /accounts/:id
+ * @desc  Get User by Id
+ */
 function getById(req, res, next) {
   // users can get their own account and admins can get any account
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
@@ -226,6 +227,10 @@ function getById(req, res, next) {
     .catch(next);
 }
 
+/**
+ * @route   POST /accounts/
+ * @desc    Create an User
+ */
 function createSchema(req, res, next) {
   const schema = Joi.object({
     title: Joi.string().required(),
@@ -246,6 +251,10 @@ function create(req, res, next) {
     .catch(next);
 }
 
+/**
+ * @route   PUT /accounts/:id
+ * @desc    Update account by ID
+ */
 function updateSchema(req, res, next) {
   const schemaRules = {
     title: Joi.string().empty(''),
@@ -277,6 +286,11 @@ function update(req, res, next) {
     .catch(next);
 }
 
+/**
+ * @route   DEL /accounts/:id
+ * @desc    Delete account
+ */
+
 function _delete(req, res, next) {
   // users can delete their own account and admins can delete any account
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
@@ -290,9 +304,10 @@ function _delete(req, res, next) {
 }
 
 // helper functions
-
+/**
+ *  create cookie with refresh token that expires in 7 days
+ */
 function setTokenCookie(res, token) {
-  // create cookie with refresh token that expires in 7 days
   const cookieOptions = {
     httpOnly: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)

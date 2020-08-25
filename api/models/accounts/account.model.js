@@ -11,23 +11,24 @@ const schema = new Schema({
   role: { type: String, required: true },
   verificationToken: String,
   verified: Date,
-  resetToken: {
-    token: String,
-    expires: Date
-  },
+  resetToken: { token: String, expires: Date },
   passwordReset: Date,
   created: { type: Date, default: Date.now },
   updated: Date
+});
+
+schema.virtual('isVerified').get(function () {
+  return !!(this.verified || this.passwordReset);
 });
 
 schema.virtual('isVerified').get(() => {
   return !!(this.verified || this.passwordReset);
 });
 
-schema.get('toJSON', {
+schema.set('toJSON', {
   virtuals: true,
   versionKey: false,
-  trasnform: function (doc, ret) {
+  transform: function (doc, ret) {
     // remove these props when object is serialized
     delete ret._id;
     delete ret.passwordHash;
