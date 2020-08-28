@@ -32,7 +32,7 @@ module.exports = {
  */
 async function authenticate({ email, password, ipAddress }) {
   const account = await db.Account.findOne({ email });
-  console.log(account);
+  // console.log(account);
 
   if (!account || !account.isVerified || !bcrypt.compareSync(password, account.passwordHash)) {
     throw 'Email or password is incorrect';
@@ -95,7 +95,7 @@ async function register(params, origin) {
   // validate
   if (await db.Account.findOne({ email: params.email })) {
     // send already registered error in email to prevent account enumeration
-    console.log('Email registered');
+    // console.log('Email registered');
     return await sendAlreadyRegisteredEmail(params.email, origin);
   }
 
