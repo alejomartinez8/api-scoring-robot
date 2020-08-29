@@ -19,7 +19,7 @@ app.use(
 );
 
 // api routes
-app.use('/accounts', require('./controllers/accounts/accounts.controller'));
+app.use('/users', require('./controllers/users/users.controller'));
 
 // global error handler
 app.use(errorHandler);

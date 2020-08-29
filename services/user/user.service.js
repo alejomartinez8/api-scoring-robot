@@ -4,15 +4,11 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const sendEmail = require('helpers/send-email');
 const db = require('helpers/db');
-const Role = require('helpers/role');
+const Role = require('../../helpers/role');
 
 module.exports = {
-  // Authenticate
-  authenticate,
-  refreshToken,
-  revokeToken,
-
-  // Register, verify email, forgot password
+  // loing, register, verify email, forgot password
+  login,
   register,
   verifyEmail,
   forgotPassword,
@@ -28,75 +24,35 @@ module.exports = {
 };
 
 /**
- * Authenticate Service
+ * login Service
  */
-async function authenticate({ email, password, ipAddress }) {
+async function login({ email, password }) {
+  console.log('login service');
   const account = await db.Account.findOne({ email });
-  // console.log(account);
 
   if (!account || !account.isVerified || !bcrypt.compareSync(password, account.passwordHash)) {
     throw 'Email or password is incorrect';
   }
 
   // authentication successful so generate jwt and refresh tokens
-  const jwtToken = generateJwtToken(account);
-  const refreshToken = generateRefreshToken(account, ipAddress);
-
-  // save refresh token
-  await refreshToken.save();
+  const token = generateJwtToken(account);
 
   // return basic details and tokens
   return {
-    ...basicDetails(account),
-    jwtToken,
-    refreshToken: refreshToken.token
+    // ...basicDetails(account),
+    token
   };
-}
-
-/**
- * Refresh Token Service
- */
-async function refreshToken({ token, ipAddress }) {
-  const refreshToken = await getRefreshToken(token);
-  const { account } = refreshToken;
-
-  // replace old refresh token with a new one and save
-  const newRefreshToken = generateRefreshToken(account, ipAddress);
-  refreshToken.revoked = Date.now();
-  refreshToken.revokedByIp = ipAddress;
-  refreshToken.replacedByToken = newRefreshToken.token;
-  await refreshToken.save();
-  await newRefreshToken.save();
-
-  // generate new jwt
-  const jwtToken = generateJwtToken(account);
-
-  // return basic details and tokens
-  return {
-    ...basicDetails(account),
-    jwtToken,
-    refreshToken: newRefreshToken.token
-  };
-}
-
-async function revokeToken({ token, ipAddress }) {
-  const refreshToken = await getRefreshToken(token);
-
-  // revoke token and save
-  refreshToken.revoked = Date.now();
-  refreshToken.revokedByIp = ipAddress;
-  await refreshToken.save();
 }
 
 /**
  * Register an user to create an account
  */
 async function register(params, origin) {
-  // validate
+  console.log('register service');
   if (await db.Account.findOne({ email: params.email })) {
+    throw 'Email already registered';
     // send already registered error in email to prevent account enumeration
-    // console.log('Email registered');
-    return await sendAlreadyRegisteredEmail(params.email, origin);
+    // return await sendAlreadyRegisteredEmail(params.email, origin);
   }
 
   // create account object
@@ -117,9 +73,7 @@ async function register(params, origin) {
   await sendVerificationEmail(account, origin);
 }
 
-/**
- * With the token sent to email, verify the user to access to the API
- */
+// With the token sent to email, verify the user to access to the API
 async function verifyEmail({ token }) {
   const account = await db.Account.findOne({ verificationToken: token });
 
@@ -130,9 +84,7 @@ async function verifyEmail({ token }) {
   await account.save();
 }
 
-/**
- * Find email on DB if exist, if yes send and email with reset Token
- */
+// Find email on DB if exist, if yes send and email with reset Token
 async function forgotPassword({ email }, origin) {
   const account = await db.Account.findOne({ email });
 
@@ -150,9 +102,7 @@ async function forgotPassword({ email }, origin) {
   await sendPasswordResetEmail(account, origin);
 }
 
-/**
- * Find on DB the token in 'resetToken' field
- */
+// Find on DB the token in 'resetToken' field
 async function validateResetToken({ token }) {
   const account = await db.Account.findOne({
     'resetToken.token': token,
@@ -162,8 +112,7 @@ async function validateResetToken({ token }) {
   if (!account) throw 'Invalid token';
 }
 
-//
-//
+// reset Password
 async function resetPassword({ token, password }) {
   const account = await db.Account.findOne({
     'resetToken.token': token,
@@ -179,9 +128,7 @@ async function resetPassword({ token, password }) {
   await account.save();
 }
 
-/**
- * Get All accounts
- */
+//Get All accounts
 async function getAll() {
   const accounts = await db.Account.find();
   return accounts.map((account) => basicDetails(account));
@@ -259,15 +206,6 @@ async function getAccount(id) {
 }
 
 /**
- * Find token in RefreshToken DB
- */
-async function getRefreshToken(token) {
-  const refreshToken = await db.RefreshToken.findOne({ token }).populate('account');
-  if (!refreshToken || !refreshToken.isActive) throw 'Invalid token';
-  return refreshToken;
-}
-
-/**
  * Hash password with bcrypt
  */
 function hash(password) {
@@ -278,20 +216,8 @@ function hash(password) {
  * Create a jwt token containing the account id that expires in 15 minutes
  */
 function generateJwtToken(account) {
-  return jwt.sign({ sub: account.id, id: account.id }, config.secret, {
-    expiresIn: '15m'
-  });
-}
-
-/**
- * Create a refresh token that expires in 7 days
- */
-function generateRefreshToken(account, ipAddress) {
-  return new db.RefreshToken({
-    account: account.id,
-    token: randomTokenString(),
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    createdByIp: ipAddress
+  return jwt.sign({ id: account.id }, config.secret, {
+    expiresIn: '1d'
   });
 }
 
@@ -320,9 +246,7 @@ function basicDetails(account) {
   };
 }
 
-/**
- * Send an Email with the verification token stored on Data Base in field verificationToken, this field is only stored when the user is not verified
- */
+// Send an Email with the verification token stored on Data Base in field verificationToken, this field is only stored when the user is not verified
 async function sendVerificationEmail(account, origin) {
   let message;
   if (origin) {
@@ -339,26 +263,6 @@ async function sendVerificationEmail(account, origin) {
     subject: 'Sign-up Verification API - Verify Email',
     html: `<h4>Verify Email</h4>
              <p>Thanks for registering!</p>
-             ${message}`
-  });
-}
-
-/**
- * Send an Email for an user already registered whit the link of forgot password
- */
-async function sendAlreadyRegisteredEmail(email, origin) {
-  let message;
-  if (origin) {
-    message = `<p>If you don't know your password please visit the <a href="${origin}/account/forgot-password">forgot password</a> page.</p>`;
-  } else {
-    message = `<p>If you don't know your password you can reset it via the <code>/account/forgot-password</code> api route.</p>`;
-  }
-
-  await sendEmail({
-    to: email,
-    subject: 'Sign-up Verification API - Email Already Registered',
-    html: `<h4>Email Already Registered</h4>
-             <p>Your email <strong>${email}</strong> is already registered.</p>
              ${message}`
   });
 }

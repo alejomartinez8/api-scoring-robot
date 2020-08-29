@@ -4,14 +4,10 @@ const Joi = require('joi');
 const validateRequest = require('middleware/validate-request');
 const authorize = require('middleware/authorize');
 const Role = require('helpers/role');
-const accountService = require('../../services/accounts/account.service');
-
-// Login - authenticate routen
-router.post('/authenticate', authenticateSchema, authenticate);
-router.post('/refresh-token', refreshToken);
-router.post('/revoke-token', authorize(), revokeTokenSchema, revokeToken);
+const accountService = require('../../services/user/user.service');
 
 // Register, verify email, forgot password routes
+router.post('/login', loginSchema, login);
 router.post('/register', registerSchema, register);
 router.post('/verify-email', verifyEmailSchema, verifyEmail);
 router.post('/forgot-password', forgotPasswordSchema, forgotPassword);
@@ -19,7 +15,8 @@ router.post('/validate-reset-token', validateResetTokenSchema, validateResetToke
 router.post('/reset-password', resetPasswordSchema, resetPassword);
 
 // Authorize - User roles
-router.get('/', authorize(Role.Admin), getAll);
+router.get('/', authorize(), getUser);
+router.get('/getAll', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
 router.post('/', authorize(Role.Admin), createSchema, create);
 router.put('/:id', authorize(), updateSchema, update);
@@ -27,12 +24,8 @@ router.delete('/:id', authorize(), _delete);
 
 module.exports = router;
 
-/**
- * @route   /accounts/authenticate
- * @desc    Authenticate user with email and password
- * @access  Public
- */
-function authenticateSchema(req, res, next) {
+// login validate middleware
+function loginSchema(req, res, next) {
   const schema = Joi.object({
     email: Joi.string().required(),
     password: Joi.string().required()
@@ -40,62 +33,20 @@ function authenticateSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
-function authenticate(req, res, next) {
+// login user with email and password
+function login(req, res, next) {
   const { email, password } = req.body;
-  const ipAddress = req.ip;
   accountService
-    .authenticate({ email, password, ipAddress })
-    .then(({ refreshToken, ...account }) => {
-      setTokenCookie(res, refreshToken);
-      res.json(account);
+    .login({ email, password })
+    .then((token) => {
+      res.json(token);
     })
     .catch(next);
 }
 
-function refreshToken(req, res, next) {
-  const token = req.cookies.refreshToken;
-  const ipAddress = req.ip;
-  accountService
-    .refreshToken({ token, ipAddress })
-    .then(({ refreshToken, ...account }) => {
-      setTokenCookie(res, refreshToken);
-      res.json(account);
-    })
-    .catch(next);
-}
-
-function revokeTokenSchema(req, res, next) {
-  const schema = Joi.object({
-    token: Joi.string().empty('')
-  });
-  validateRequest(req, next, schema);
-}
-
-function revokeToken(req, res, next) {
-  // accept token from request body or cookie
-  const token = req.body.token || req.cookies.refreshToken;
-  const ipAddress = req.ip;
-
-  if (!token) return res.status(400).json({ message: 'Token is required' });
-
-  // users can revoke their own tokens and admins can revoke any tokens
-  if (!req.user.ownsToken(token) && req.user.role !== Role.Admin) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-
-  accountService
-    .revokeToken({ token, ipAddress })
-    .then(() => res.json({ message: 'Token revoked' }))
-    .catch(next);
-}
-
-/**
- * Register an user and send and email to verifiy the account,the firt User is an Admin Role, the other are just User, if the email exist send and email again
- */
-
+// register validation
 function registerSchema(req, res, next) {
   const schema = Joi.object({
-    title: Joi.string().required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     email: Joi.string().email().required(),
@@ -106,6 +57,10 @@ function registerSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+/** Register an user and send and email to verifiy the account,
+ * the first User is an Admin Role, the other are just User,
+ * if the email exist send and email again
+ */
 function register(req, res, next) {
   accountService
     .register(req.body, req.get('origin'))
@@ -118,11 +73,8 @@ function register(req, res, next) {
 }
 
 /**
- * @route   /accounts/verify-email
- * @desc    Verify email with token sent to email
- * @access  Private
+ * Verify email validation
  */
-
 function verifyEmailSchema(req, res, next) {
   const schema = Joi.object({
     token: Joi.string().required()
@@ -130,6 +82,9 @@ function verifyEmailSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+/**
+ * Verify email with token sent to email
+ */
 function verifyEmail(req, res, next) {
   accountService
     .verifyEmail(req.body)
@@ -138,10 +93,8 @@ function verifyEmail(req, res, next) {
 }
 
 /**
- * @route   /accounts/forgot-password
- * @desc    Send a token for 24 hours of validate to reset the password
+ * forgot password validate
  */
-
 function forgotPasswordSchema(req, res, next) {
   const schema = Joi.object({
     email: Joi.string().email().required()
@@ -149,6 +102,9 @@ function forgotPasswordSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+/**
+ * Send a token for 24 hours of validate to reset the password
+ */
 function forgotPassword(req, res, next) {
   accountService
     .forgotPassword(req.body, req.get('origin'))
@@ -161,10 +117,8 @@ function forgotPassword(req, res, next) {
 }
 
 /**
- * @route   /accounts/validate-reset-token
- * @desc    Validate the token sent to email
+ * Validate reset password Schema
  */
-
 function resetPasswordSchema(req, res, next) {
   const schema = Joi.object({
     token: Joi.string().required(),
@@ -174,6 +128,9 @@ function resetPasswordSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+/**
+ * Validate the Reset token sent to email
+ */
 function validateResetToken(req, res, next) {
   accountService
     .validateResetToken(req.body)
@@ -182,10 +139,8 @@ function validateResetToken(req, res, next) {
 }
 
 /**
- * @route   /reset-password
- * @desc    Validate th reset token sent to email to create new password
+ * Validate Schema the reset token sent to email to create new password
  */
-
 function validateResetTokenSchema(req, res, next) {
   const schema = Joi.object({
     token: Joi.string().required()
@@ -193,6 +148,9 @@ function validateResetTokenSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+/**
+ * Validate the reset token sent to email to create new password
+ */
 function resetPassword(req, res, next) {
   accountService
     .resetPassword(req.body)
@@ -200,10 +158,16 @@ function resetPassword(req, res, next) {
     .catch(next);
 }
 
-/**
- * @route GET /accounts/
- * @desc  Get all users-account
- */
+// Get user
+function getUser(req, res, next) {
+  console.log('getUser');
+  accountService
+    .getById(req.user.id)
+    .then((user) => (user ? res.json(user) : res.sendStatus(404)))
+    .catch(next);
+}
+
+//  Get all users-account
 function getAll(req, res, next) {
   accountService
     .getAll()
@@ -211,10 +175,7 @@ function getAll(req, res, next) {
     .catch(next);
 }
 
-/**
- * @route GET /accounts/:id
- * @desc  Get User by Id
- */
+// Get User by Id
 function getById(req, res, next) {
   // users can get their own account and admins can get any account
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
@@ -227,10 +188,7 @@ function getById(req, res, next) {
     .catch(next);
 }
 
-/**
- * @route   POST /accounts/
- * @desc    Create an User
- */
+// Validate User Schema
 function createSchema(req, res, next) {
   const schema = Joi.object({
     title: Joi.string().required(),
@@ -244,6 +202,7 @@ function createSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+// Create an User
 function create(req, res, next) {
   accountService
     .create(req.body)
@@ -251,10 +210,7 @@ function create(req, res, next) {
     .catch(next);
 }
 
-/**
- * @route   PUT /accounts/:id
- * @desc    Update account by ID
- */
+// Validate User Schema
 function updateSchema(req, res, next) {
   const schemaRules = {
     title: Joi.string().empty(''),
@@ -274,12 +230,12 @@ function updateSchema(req, res, next) {
   validateRequest(req, next, schema);
 }
 
+// Update account by ID
 function update(req, res, next) {
   // users can update their own account and admins can update any account
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-
   accountService
     .update(req.params.id, req.body)
     .then((account) => res.json(account))
@@ -287,10 +243,8 @@ function update(req, res, next) {
 }
 
 /**
- * @route   DEL /accounts/:id
- * @desc    Delete account
+ * Delete account
  */
-
 function _delete(req, res, next) {
   // users can delete their own account and admins can delete any account
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
@@ -301,16 +255,4 @@ function _delete(req, res, next) {
     .delete(req.params.id)
     .then(() => res.json({ message: 'Account deleted successfully' }))
     .catch(next);
-}
-
-// helper functions
-/**
- *  create cookie with refresh token that expires in 7 days
- */
-function setTokenCookie(res, token) {
-  const cookieOptions = {
-    httpOnly: true,
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-  };
-  res.cookie('refreshToken', token, cookieOptions);
 }

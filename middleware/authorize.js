@@ -1,12 +1,12 @@
 const jwt = require('express-jwt');
-const { secret } = require('config.json');
-const db = require('helpers/db');
+const { secret } = require('../config.json');
+const db = require('../helpers/db');
 
 // @params  Can be a single role string (e.g. Role.User or 'User') or an array of roles (e.g [Role.Admin, Role.User] or ['Admin', 'user])
 // @desc    Authorize middleware, validate role and token if exist
-// @acces   Public
 
 function authorize(roles = []) {
+  console.log('authorize middleware');
   // convert string to array
   if (typeof roles === 'string') {
     roles = [roles];
