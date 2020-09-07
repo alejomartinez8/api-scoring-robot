@@ -1,5 +1,5 @@
 {
-  "name": "software-robotics-competitions",
+  "name": "api-scoring-robot",
   "version": "3.0.0",
   "description": "Software for Robotics Competitions of Pygmalion v3.0",
   "main": "server.js",

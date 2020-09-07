@@ -1,12 +1,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const schema = new Schema({
+const userSchema = new Schema({
   email: { type: String, unique: true, required: true },
   passwordHash: { type: String, required: true },
-  // title: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  institution: { type: String },
+  city: { type: String },
+  country: { type: String },
+  bio: { type: String },
+  social: {
+    youtube: { type: String },
+    twitter: { type: String },
+    facebook: { type: String },
+    linkedin: { type: String },
+    instagram: { type: String },
+    github: { type: String }
+  },
   acceptTerms: Boolean,
   role: { type: String, required: true },
   verificationToken: String,
@@ -17,15 +28,15 @@ const schema = new Schema({
   updated: Date
 });
 
-schema.virtual('isVerified').get(function () {
+userSchema.virtual('isVerified').get(function () {
   return !!(this.verified || this.passwordReset);
 });
 
-schema.virtual('isVerified').get(() => {
-  return !!(this.verified || this.passwordReset);
-});
+// userSchema.virtual('isVerified').get(() => {
+//   return !!(this.verified || this.passwordReset);
+// });
 
-schema.set('toJSON', {
+userSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: function (doc, ret) {
@@ -35,4 +46,4 @@ schema.set('toJSON', {
   }
 });
 
-module.exports = mongoose.model('Account', schema);
+module.exports = mongoose.model('user', userSchema);

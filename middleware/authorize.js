@@ -6,7 +6,6 @@ const db = require('../helpers/db');
 // @desc    Authorize middleware, validate role and token if exist
 
 function authorize(roles = []) {
-  console.log('authorize middleware');
   // convert string to array
   if (typeof roles === 'string') {
     roles = [roles];
@@ -18,17 +17,15 @@ function authorize(roles = []) {
 
     // athorized based on user role
     async (req, res, next) => {
-      const account = await db.Account.findById(req.user.id);
-      const refreshTokens = await db.RefreshToken.find({ account: account.id });
+      const user = await db.User.findById(req.user.id);
 
-      if (!account || (roles.length && !roles.includes(account.role))) {
-        //account no longer exists or role not authorized
-        return res.status(401).json({ message: 'Unauthorized' });
+      if (!user || (roles.length && !roles.includes(user.role))) {
+        //user no longer exists or role not authorized
+        return res.status(401).json({ message: 'No autorizado' });
       }
 
       // authentication and authorization successful
-      req.user.role = account.role;
-      req.user.ownsToken = (token) => !!refreshTokens.find((x) => x.token === token);
+      req.user.role = user.role;
       next();
     }
   ];

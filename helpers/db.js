@@ -13,8 +13,7 @@ mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionO
 mongoose.Promise = global.Promise;
 
 module.exports = {
-  Account: require('../models/accounts/account.model'),
-  RefreshToken: require('../models/accounts/refresh-token.model'),
+  User: require('../models/users/user.model'),
   isValidId
 };
 
