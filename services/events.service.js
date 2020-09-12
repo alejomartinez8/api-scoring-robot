@@ -70,7 +70,7 @@ async function deleteEvent(id) {
 }
 
 /**
- * Return Basic Details of User (filter by BD)
+ * Return Basic Details
  */
 function basicDetails(event) {
   //values

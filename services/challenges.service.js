@@ -26,8 +26,6 @@ async function updateChallenge(id, params) {
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
 
-  console.log('challenge in DB', challenge);
-
   if (
     challenge.version !== params.version &&
     (await db.User.findOne({ version: params.version }))
@@ -65,7 +63,7 @@ async function deleteChallenge(id) {
 }
 
 /**
- * Return Basic Details of User (filter by BD)
+ * Return Basic Details
  */
 function basicDetails(challenge) {
   //values

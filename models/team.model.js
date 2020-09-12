@@ -6,6 +6,7 @@ const teamSchema = new Schema({
   name: { type: String },
   number: { type: String },
   category: { type: String },
+  institution: { type: String },
   players: [
     {
       name: { type: String },

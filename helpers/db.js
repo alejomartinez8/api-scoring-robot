@@ -16,6 +16,7 @@ module.exports = {
   User: require('../models/user.model'),
   Event: require('../models/event.model'),
   Challenge: require('../models/challenge.model'),
+  Team: require('../models/team.model'),
   isValidId
 };
 

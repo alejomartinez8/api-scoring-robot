@@ -18,7 +18,6 @@ router.post(
     ]
   ],
   (req, res, next) => {
-    console.log('add or update event controller', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return next({ errors: errors.array() });

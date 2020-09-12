@@ -27,7 +27,6 @@ module.exports = {
  * login Service
  */
 async function login({ email, password }) {
-  console.log('login service');
   const user = await db.User.findOne({ email });
 
   if (!user) {
@@ -56,7 +55,6 @@ async function login({ email, password }) {
  * Register an user to create an user
  */
 async function register(params, origin) {
-  console.log('register service');
   if (await db.User.findOne({ email: params.email })) {
     throw 'Email ya registrado';
     // send already registered error in email to prevent user enumeration

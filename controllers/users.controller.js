@@ -196,7 +196,6 @@ function getById(req, res, next) {
 
 // Validate User Schema
 function createSchema(req, res, next) {
-  console.log('createSchema');
   const schema = Joi.object({
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
@@ -213,7 +212,6 @@ function createSchema(req, res, next) {
 
 // Create an User
 function create(req, res, next) {
-  console.log('create controller');
   userService
     .create(req.body)
     .then((user) => res.json(user))
