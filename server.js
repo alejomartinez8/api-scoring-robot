@@ -20,6 +20,7 @@ app.use(
 
 // api routes
 app.use('/users', require('./controllers/users/users.controller'));
+app.use('/events', require('./controllers/events/events.controller'));
 
 // global error handler
 app.use(errorHandler);

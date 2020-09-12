@@ -6,6 +6,8 @@ const authorize = require('middleware/authorize');
 const Role = require('helpers/role');
 const userService = require('../../services/user/user.service');
 
+module.exports = router;
+
 // Register, verify email, forgot password routes
 router.post('/login', loginSchema, login);
 router.post('/register', registerSchema, register);
@@ -23,8 +25,6 @@ router.get('/:id', authorize(), getById);
 router.post('/', authorize(Role.Admin), createSchema, create);
 router.put('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
-
-module.exports = router;
 
 // login validate middleware
 function loginSchema(req, res, next) {
