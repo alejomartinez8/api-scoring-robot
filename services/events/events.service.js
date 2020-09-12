@@ -12,7 +12,7 @@ module.exports = {
 /** Get All Events */
 async function getAllEvents() {
   const events = await db.Event.find();
-  return events;
+  return events.map((event) => basicDetails(event));
 }
 
 /** Add an Event */
@@ -28,12 +28,14 @@ async function addEvent(params) {
 
   const event = new db.Event(params);
   await event.save();
-  return event;
+  return basicDetails(event);
 }
 
 /** Update an Event */
 async function updateEvent(id, params) {
-  const event = await getById(id);
+  if (!db.isValidId(id)) throw 'Id de evento no válido';
+  const event = await db.Event.findById(id);
+  if (!event) throw 'Evento no encontrado';
 
   if (event.name !== params.name && (await db.User.findOne({ name: params.name }))) {
     throw `Evento "${params.name}" ya existe`;
@@ -48,7 +50,7 @@ async function updateEvent(id, params) {
   event.updated = Date.now();
   await event.save();
 
-  return event;
+  return basicDetails(event);
 }
 
 /** Get Event by Id */
@@ -56,7 +58,7 @@ async function getById(id) {
   if (!db.isValidId(id)) throw 'Id de evento no válido';
   const event = await db.Event.findById(id);
   if (!event) throw 'Evento no encontrado';
-  return event;
+  return basicDetails(event);
 }
 
 /**Delete Event by Id */
@@ -65,4 +67,25 @@ async function deleteEvent(id) {
   const event = await db.Event.findById(id);
   if (!event) throw 'Evento no encontrado';
   await event.remove();
+}
+
+/**
+ * Return Basic Details of User (filter by BD)
+ */
+function basicDetails(event) {
+  //values
+  const { id, name, shortName, imageURL, year, description, challenges, created, updated } = event;
+
+  // return
+  return {
+    id,
+    name,
+    shortName,
+    imageURL,
+    year,
+    description,
+    challenges,
+    created,
+    updated
+  };
 }
