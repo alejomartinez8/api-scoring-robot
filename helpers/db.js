@@ -13,8 +13,9 @@ mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionO
 mongoose.Promise = global.Promise;
 
 module.exports = {
-  User: require('../models/user/user.model'),
-  Event: require('../models/event/event.model'),
+  User: require('../models/user.model'),
+  Event: require('../models/event.model'),
+  Challenge: require('../models/challenge.model'),
   isValidId
 };
 

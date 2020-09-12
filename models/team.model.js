@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
+  coach: { type: String },
   name: { type: String },
   number: { type: String },
   category: { type: String },
@@ -14,6 +15,6 @@ const teamSchema = new Schema({
   ],
   created: { type: Date, default: Date.now },
   updated: Date
-})
+});
 
-module.exports = mongoose.model('team', teamSchema)
+module.exports = mongoose.model('team', teamSchema);

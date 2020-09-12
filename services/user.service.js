@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const sendEmail = require('helpers/send-email');
 const db = require('helpers/db');
-const Role = require('../../helpers/role');
+const Role = require('../helpers/role');
 
 module.exports = {
   // loing, register, verify email, forgot password

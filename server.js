@@ -19,8 +19,9 @@ app.use(
 );
 
 // api routes
-app.use('/users', require('./controllers/users/users.controller'));
-app.use('/events', require('./controllers/events/events.controller'));
+app.use('/users', require('./controllers/users.controller'));
+app.use('/events', require('./controllers/events.controller'));
+app.use('/challenges', require('./controllers/challenges.controller'));
 
 // global error handler
 app.use(errorHandler);

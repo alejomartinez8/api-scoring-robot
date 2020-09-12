@@ -1,44 +1,43 @@
 const express = require('express');
 const router = express.Router();
 const authorize = require('middleware/authorize');
-const eventsService = require('../../services/events/events.service');
+const challengesService = require('../services/challenges.service');
 const Role = require('helpers/role');
 const { check, validationResult } = require('express-validator');
 
 module.exports = router;
 
-/** Add an Event */
+/** Add an Challenge */
 router.post(
   '/',
   [
     authorize(Role.Admin),
     [
       check('name', 'Nombre es requerido').not().isEmpty(),
-      check('shortName', 'Nombre corto es requerido').not().isEmpty()
+      check('version', 'Código reto requerido').not().isEmpty()
     ]
   ],
   (req, res, next) => {
-    console.log('add or update event controller', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return next({ errors: errors.array() });
     }
 
-    eventsService
-      .addEvent(req.body)
-      .then((event) => res.json(event))
+    challengesService
+      .addChallenge(req.body)
+      .then((challenge) => res.json(challenge))
       .catch(next);
   }
 );
 
-/** Update an Event */
+/** Update an Challenge */
 router.post(
   '/:id',
   [
     authorize(Role.Admin),
     [
       check('name', 'Nombre es requerido').not().isEmpty(),
-      check('shortName', 'Nombre corto es requerido').not().isEmpty()
+      check('version', 'Nombre corto es requerido').not().isEmpty()
     ]
   ],
   (req, res, next) => {
@@ -47,35 +46,35 @@ router.post(
       return next({ errors: errors.array() });
     }
 
-    eventsService
-      .updateEvent(req.params.id, req.body)
-      .then((event) => res.json(event))
+    challengesService
+      .updateChallenge(req.params.id, req.body)
+      .then((challenge) => res.json(challenge))
       .catch(next);
   }
 );
 
-/** Get Event by Id */
+/** Get Challenge by Id */
 router.get('/:id', authorize(), (req, res, next) => {
-  eventsService
+  challengesService
     .getById(req.params.id)
-    .then((event) => res.json(event))
+    .then((challenge) => res.json(challenge))
     .catch(next);
 });
 
-/** Get All Events */
+/** Get All Challenges */
 router.get('/', authorize(), (req, res, next) => {
-  eventsService
-    .getAllEvents()
-    .then((events) => {
-      res.json(events);
+  challengesService
+    .getAllChallenges()
+    .then((challenges) => {
+      res.json(challenges);
     })
     .catch(next);
 });
 
-/** Delete Event */
+/** Delete Challenge */
 router.delete('/:id', authorize(Role.Admin), (req, res, next) => {
-  eventsService
-    .deleteEvent(req.params.id)
-    .then(() => res.json({ message: 'Evento Eliminado' }))
+  challengesService
+    .deleteChallenge(req.params.id)
+    .then(() => res.json({ message: 'Reto Eliminado' }))
     .catch(next);
 });
