@@ -6,13 +6,14 @@ module.exports = {
   updateEvent,
   getAllEvents,
   getById,
+  getByShortName,
   deleteEvent
 };
 
 /** Get All Events */
 async function getAllEvents() {
   const events = await db.Event.find();
-  return events.map((event) => basicDetails(event));
+  return events.map((event) => event);
 }
 
 /** Add an Event */
@@ -27,8 +28,9 @@ async function addEvent(params) {
   }
 
   const event = new db.Event(params);
-  await event.save();
-  return basicDetails(event);
+  await event.save().then((event) => event.populate('challenges').execPopulate());
+
+  return event;
 }
 
 /** Update an Event */
@@ -48,17 +50,35 @@ async function updateEvent(id, params) {
 
   Object.assign(event, params);
   event.updated = Date.now();
-  await event.save();
+  await event.save().then((event) => event.populate('challenges').execPopulate());
 
-  return basicDetails(event);
+  return event;
 }
 
 /** Get Event by Id */
 async function getById(id) {
   if (!db.isValidId(id)) throw 'Id de evento no válido';
-  const event = await db.Event.findById(id);
+  const event = await db.Event.findById(id).populate('challenges', [
+    'name',
+    'imageURL',
+    'available'
+  ]);
   if (!event) throw 'Evento no encontrado';
-  return basicDetails(event);
+  return event;
+}
+
+/** Get Event by shortName */
+async function getByShortName(shortName) {
+  const event = await db.Event.findOne({ shortName: shortName })
+    .collation({
+      // case-insensitive
+      locale: 'en',
+      strength: 2
+    })
+    .populate('challenges');
+
+  if (!event) throw 'Evento no encontrado';
+  return event;
 }
 
 /**Delete Event by Id */
@@ -67,25 +87,4 @@ async function deleteEvent(id) {
   const event = await db.Event.findById(id);
   if (!event) throw 'Evento no encontrado';
   await event.remove();
-}
-
-/**
- * Return Basic Details
- */
-function basicDetails(event) {
-  //values
-  const { id, name, shortName, imageURL, year, description, challenges, created, updated } = event;
-
-  // return
-  return {
-    id,
-    name,
-    shortName,
-    imageURL,
-    year,
-    description,
-    challenges,
-    created,
-    updated
-  };
 }

@@ -23,7 +23,7 @@ router.get('/:id', authorize(), getById);
 
 // Post, put, delete verb
 router.post('/', authorize(Role.Admin), createSchema, create);
-router.put('/:id', authorize(), updateSchema, update);
+router.post('/:id', authorize(), updateSchema, update);
 router.delete('/:id', authorize(), _delete);
 
 // login validate middleware

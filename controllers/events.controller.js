@@ -54,15 +54,23 @@ router.post(
 );
 
 /** Get Event by Id */
-router.get('/:id', authorize(), (req, res, next) => {
+router.get('/:id', authorize(Role.Admin), (req, res, next) => {
   eventsService
     .getById(req.params.id)
     .then((event) => res.json(event))
     .catch(next);
 });
 
+/** Get Event by shortName */
+router.get('/shortName/:shortName', (req, res, next) => {
+  eventsService
+    .getByShortName(req.params.shortName)
+    .then((event) => res.json(event))
+    .catch(next);
+});
+
 /** Get All Events */
-router.get('/', authorize(), (req, res, next) => {
+router.get('/', (req, res, next) => {
   eventsService
     .getAllEvents()
     .then((events) => {

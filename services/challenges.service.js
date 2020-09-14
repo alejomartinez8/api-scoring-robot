@@ -17,7 +17,7 @@ async function addChallenge(params) {
 
   const challenge = new db.Challenge(params);
   await challenge.save();
-  return basicDetails(challenge);
+  return challenge;
 }
 
 /** Update an Challenge */
@@ -37,13 +37,13 @@ async function updateChallenge(id, params) {
   challenge.updated = Date.now();
   await challenge.save();
 
-  return basicDetails(challenge);
+  return challenge;
 }
 
 /** Get All Challenges */
 async function getAllChallenges() {
   const events = await db.Challenge.find();
-  return events.map((challenge) => basicDetails(challenge));
+  return events.map((challenge) => challenge);
 }
 
 /** Get Challenge by Id */
@@ -51,7 +51,7 @@ async function getById(id) {
   if (!db.isValidId(id)) throw 'Id de reto no válido';
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
-  return basicDetails(challenge);
+  return challenge;
 }
 
 /**Delete Challenge by Id */
@@ -60,37 +60,4 @@ async function deleteChallenge(id) {
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
   await challenge.remove();
-}
-
-/**
- * Return Basic Details
- */
-function basicDetails(challenge) {
-  //values
-  const {
-    id,
-    name,
-    version,
-    imageURL,
-    description,
-    teamMax,
-    turnMax,
-    available,
-    created,
-    updated
-  } = challenge;
-
-  // return
-  return {
-    id,
-    name,
-    version,
-    imageURL,
-    description,
-    teamMax,
-    turnMax,
-    available,
-    created,
-    updated
-  };
 }

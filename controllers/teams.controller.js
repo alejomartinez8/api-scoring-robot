@@ -50,7 +50,7 @@ router.get('/:id', authorize(), (req, res, next) => {
 });
 
 /** Get All Teams */
-router.get('/', authorize(Role.Admin), (req, res, next) => {
+router.get('/', (req, res, next) => {
   teamsService
     .getAllTeams()
     .then((teams) => {

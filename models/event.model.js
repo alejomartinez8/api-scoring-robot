@@ -7,13 +7,7 @@ const eventSchema = new Schema({
   imageURL: { type: String },
   year: { type: Number },
   description: { type: String },
-  challeges: [
-    {
-      name: { type: String, required: true },
-      teamMax: { type: Number },
-      turnMax: { type: Number }
-    }
-  ],
+  challenges: [{ type: Schema.Types.ObjectId, ref: 'challenge' }],
   created: { type: Date, default: Date.now },
   updated: Date
 });

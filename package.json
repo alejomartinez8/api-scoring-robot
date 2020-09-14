@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "start:dev": "nodemon server"
+    "dev": "nodemon server"
   },
   "author": "Alejandro Martinez",
   "license": "MIT",

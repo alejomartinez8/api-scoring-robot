@@ -17,9 +17,14 @@ module.exports = {
   Event: require('../models/event.model'),
   Challenge: require('../models/challenge.model'),
   Team: require('../models/team.model'),
-  isValidId
+  isValidId,
+  convertToObjectId
 };
 
 function isValidId(id) {
   return mongoose.Types.ObjectId.isValid(id);
+}
+
+function convertToObjectId(id) {
+  return mongoose.Types.ObjectId(id);
 }
