@@ -1,11 +1,12 @@
 ## Robotics Competition Software
-Versión desarrollada en MERN Stack (MongoDB, Express, React, NodeJS)
+
+Version developed in MERN Stack (MongoDB, Express, React, NodeJS)
 
 Author: Alejandro Martínez
 
 ---
 
-## Instalación
+## Installation
 
-1. Realizar un clon de este este repositorio a través del comando **git clont {url-repositorio}**
-2. Instalas las dependencias de npm (node_modules) a través del comando **npm install**, debe hacerse en el servidor del API y de la carpeta /client donde esta el Frontend en React JS.
+1. Make a clone of this repository through the command ** git clont {url-repository} **
+2. You install the npm dependencies (node_modules) through the ** npm install ** command, it must be done on the API server and from the client side on https://github.com/alejomartinez8/react-scoring-robot
