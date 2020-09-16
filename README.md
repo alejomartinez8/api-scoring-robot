@@ -1,10 +1,5 @@
-## Robotics Competition Software v3.0
-
-Esta es la v3.0 del Software de Competencias de Robótica Educativa de Pygmalion Tech, las versiones anteriores fueron realizadas en:
-v2.0 Laravel PHP
-V1.0 PHP puro
-
-La v3.0 está desarrollada en MERN Stack (MongoDB, Express, React, NodeJS)
+## Robotics Competition Software
+Versión desarrollada en MERN Stack (MongoDB, Express, React, NodeJS)
 
 Author: Alejandro Martínez
 
