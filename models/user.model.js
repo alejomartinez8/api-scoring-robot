@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
   email: { type: String, unique: true, required: true },
@@ -20,18 +20,11 @@ const userSchema = new Schema({
   },
   teams: [
     {
-      name: { type: String },
-      number: { type: String },
-      category: { type: String },
-      players: [
-        {
-          name: { type: String },
-          legalId: { type: String },
-          birthday: { type: Date }
-        }
-      ]
+      type: Schema.Types.ObjectId,
+      ref: 'team'
     }
   ],
+  isActive: Boolean,
   acceptTerms: Boolean,
   role: { type: String, required: true },
   verificationToken: String,
@@ -40,11 +33,11 @@ const userSchema = new Schema({
   passwordReset: Date,
   created: { type: Date, default: Date.now },
   updated: Date
-})
+});
 
 userSchema.virtual('isVerified').get(function () {
-  return !!(this.verified || this.passwordReset)
-})
+  return !!(this.verified || this.passwordReset);
+});
 
 // userSchema.virtual('isVerified').get(() => {
 //   return !!(this.verified || this.passwordReset);
@@ -55,9 +48,9 @@ userSchema.set('toJSON', {
   versionKey: false,
   transform: function (doc, ret) {
     // remove these props when object is serialized
-    delete ret._id
-    delete ret.passwordHash
+    delete ret._id;
+    delete ret.passwordHash;
   }
-})
+});
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('user', userSchema);

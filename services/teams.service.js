@@ -10,6 +10,7 @@ module.exports = {
 
 /** Add an Team */
 async function addTeam(params) {
+  console.log({ params });
   // validate
   if (await db.Team.findOne({ name: params.name })) {
     throw `Equipo "${params.name}" ya está registrado`;
@@ -39,7 +40,11 @@ async function updateTeam(id, params) {
 
 /** Get All Teams */
 async function getAllTeams() {
-  const teams = await db.Team.find();
+  const teams = await db.Team.find()
+    .populate({ path: 'event', select: 'shortName' })
+    .populate({ path: 'user', select: 'firstName lastName' })
+    .populate({ path: 'challenge', select: 'name' })
+    .exec();
   return teams.map((team) => team);
 }
 

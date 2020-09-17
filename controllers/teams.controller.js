@@ -29,6 +29,7 @@ router.post(
   '/:id',
   [authorize(), [check('name', 'Nombre es requerido').not().isEmpty()]],
   (req, res, next) => {
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return next({ errors: errors.array() });

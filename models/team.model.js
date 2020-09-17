@@ -2,10 +2,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
-  coach: { type: String },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'user'
+  },
+  event: {
+    type: Schema.Types.ObjectId,
+    ref: 'event'
+  },
+  challenge: {
+    type: Schema.Types.ObjectId,
+    ref: 'challenge'
+  },
   name: { type: String },
-  number: { type: String },
-  category: { type: String },
   institution: { type: String },
   players: [
     {

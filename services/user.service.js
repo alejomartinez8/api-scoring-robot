@@ -17,7 +17,7 @@ module.exports = {
 //Get All users
 async function getAll() {
   const users = await db.User.find();
-  return users.map((user) => basicDetails(user));
+  return users.map((user) => user);
 }
 
 /**
@@ -25,7 +25,7 @@ async function getAll() {
  */
 async function getById(id) {
   const user = await getUser(id);
-  return basicDetails(user);
+  return user;
 }
 
 /**
@@ -46,7 +46,7 @@ async function create(params) {
   // save user
   await user.save();
 
-  return basicDetails(user);
+  return user;
 }
 
 /**
@@ -70,7 +70,7 @@ async function update(id, params) {
   user.updated = Date.now();
   await user.save();
 
-  return basicDetails(user);
+  return user;
 }
 
 /**
@@ -96,43 +96,4 @@ async function getUser(id) {
  */
 function hash(password) {
   return bcrypt.hashSync(password, 10);
-}
-
-/**
- * Return Basic Details of User (filter by BD)
- */
-function basicDetails(user) {
-  //values
-  const {
-    id,
-    title,
-    firstName,
-    lastName,
-    email,
-    role,
-    institution,
-    city,
-    country,
-    bio,
-    created,
-    updated,
-    isVerified
-  } = user;
-
-  // return
-  return {
-    id,
-    title,
-    firstName,
-    lastName,
-    email,
-    role,
-    institution,
-    city,
-    country,
-    bio,
-    created,
-    updated,
-    isVerified
-  };
 }
