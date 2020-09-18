@@ -2,9 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const validateRequest = require('middleware/validate-request');
-const authorize = require('middleware/authorize');
-const Role = require('helpers/role');
-const authService = require('../services/auth.service');
+const authService = require('./auth.service');
 
 module.exports = router;
 

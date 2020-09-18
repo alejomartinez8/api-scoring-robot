@@ -13,10 +13,10 @@ mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionO
 mongoose.Promise = global.Promise;
 
 module.exports = {
-  User: require('../models/user.model'),
-  Event: require('../models/event.model'),
-  Challenge: require('../models/challenge.model'),
-  Team: require('../models/team.model'),
+  User: require('../api/auth/user.model'),
+  Event: require('../api/events/event.model'),
+  Challenge: require('../api/challenges/challenge.model'),
+  Team: require('../api/teams/team.model'),
   isValidId,
   convertToObjectId
 };

@@ -1,5 +1,4 @@
 const db = require('helpers/db');
-const userService = require('./user.service');
 
 module.exports = {
   addEvent,

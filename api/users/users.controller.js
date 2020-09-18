@@ -4,7 +4,7 @@ const Joi = require('joi');
 const validateRequest = require('middleware/validate-request');
 const authorize = require('middleware/authorize');
 const Role = require('helpers/role');
-const userService = require('../services/user.service');
+const userService = require('./user.service');
 
 module.exports = router;
 

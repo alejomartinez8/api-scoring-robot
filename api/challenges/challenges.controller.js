@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authorize = require('middleware/authorize');
-const challengesService = require('../services/challenges.service');
+const challengesService = require('./challenges.service');
 const Role = require('helpers/role');
 const { check, validationResult } = require('express-validator');
 

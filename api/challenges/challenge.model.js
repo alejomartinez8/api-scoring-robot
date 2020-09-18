@@ -6,6 +6,10 @@ const challengeSchema = new Schema({
   version: { type: String, required: true, unique: true },
   imageURL: { type: String },
   description: { type: String },
+  categories: [{ type: String }],
+  maxPlayersChallenge: { type: Number },
+  maxPlayersTeam: { type: Number },
+  minPlayersTeam: { type: Number },
   available: { type: Boolean, required: true },
   created: { type: Date, default: Date.now },
   updated: Date

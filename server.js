@@ -19,11 +19,11 @@ app.use(
 );
 
 // api routes
-app.use('/api/auth', require('./controllers/auth.controller'));
-app.use('/api/users', require('./controllers/users.controller'));
-app.use('/api/events', require('./controllers/events.controller'));
-app.use('/api/challenges', require('./controllers/challenges.controller'));
-app.use('/api/teams', require('./controllers/teams.controller'));
+app.use('/api/auth', require('./api/auth/auth.controller'));
+app.use('/api/users', require('./api/users/users.controller'));
+app.use('/api/events', require('./api/events/events.controller'));
+app.use('/api/challenges', require('./api/challenges/challenges.controller'));
+app.use('/api/teams', require('./api/teams/teams.controller'));
 
 // global error handler
 app.use(errorHandler);
