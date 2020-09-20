@@ -38,7 +38,6 @@ async function login({ email, password }) {
 
   // return basic details and tokens
   return {
-    // ...basicDetails(user),
     token
   };
 }

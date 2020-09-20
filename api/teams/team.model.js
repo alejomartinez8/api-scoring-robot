@@ -14,6 +14,9 @@ const teamSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'challenge'
   },
+  category: {
+    type: String
+  },
   name: { type: String },
   institution: { type: String },
   players: [

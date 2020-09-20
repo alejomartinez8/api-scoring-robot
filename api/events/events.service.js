@@ -9,12 +9,6 @@ module.exports = {
   deleteEvent
 };
 
-/** Get All Events */
-async function getAllEvents() {
-  const events = await db.Event.find();
-  return events.map((event) => event);
-}
-
 /** Add an Event */
 async function addEvent(params) {
   // validate
@@ -78,6 +72,12 @@ async function getByShortName(shortName) {
 
   if (!event) throw 'Evento no encontrado';
   return event;
+}
+
+/** Get All Events */
+async function getAllEvents() {
+  const events = await db.Event.find().populate('challenges');
+  return events.map((event) => event);
 }
 
 /**Delete Event by Id */
