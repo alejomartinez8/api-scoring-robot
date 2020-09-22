@@ -1,27 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-const validateRequest = require('middleware/validate-request');
 const authService = require('./auth.service');
 
 module.exports = router;
 
 // Register, verify email, forgot password routes
-router.post('/login', loginSchema, login);
-router.post('/register', registerSchema, register);
-router.post('/verify-email', verifyEmailSchema, verifyEmail);
-router.post('/forgot-password', forgotPasswordSchema, forgotPassword);
-router.post('/validate-reset-token', validateResetTokenSchema, validateResetToken);
-router.post('/reset-password', resetPasswordSchema, resetPassword);
-
-// login validate middleware
-function loginSchema(req, res, next) {
-  const schema = Joi.object({
-    email: Joi.string().required(),
-    password: Joi.string().required()
-  });
-  validateRequest(req, next, schema);
-}
+router.post('/login', login);
+router.post('/register', register);
+router.post('/verify-email', verifyEmail);
+router.post('/forgot-password', forgotPassword);
+router.post('/validate-reset-token', validateResetToken);
+router.post('/reset-password', resetPassword);
 
 // login user with email and password
 function login(req, res, next) {
@@ -32,23 +21,6 @@ function login(req, res, next) {
       res.json(token);
     })
     .catch(next);
-}
-
-// register validation
-function registerSchema(req, res, next) {
-  const schema = Joi.object({
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    email: Joi.string().email().required(),
-    institution: Joi.string().required(),
-    city: Joi.string().required(),
-    country: Joi.string().required(),
-    bio: Joi.string(),
-    password: Joi.string().min(6).required(),
-    confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-    acceptTerms: Joi.boolean().valid(true).required()
-  });
-  validateRequest(req, next, schema);
 }
 
 /** Register an user and send and email to verifiy the user,
@@ -67,16 +39,6 @@ function register(req, res, next) {
 }
 
 /**
- * Verify email validation
- */
-function verifyEmailSchema(req, res, next) {
-  const schema = Joi.object({
-    token: Joi.string().required()
-  });
-  validateRequest(req, next, schema);
-}
-
-/**
  * Verify email with token sent to email
  */
 function verifyEmail(req, res, next) {
@@ -84,16 +46,6 @@ function verifyEmail(req, res, next) {
     .verifyEmail(req.body)
     .then(() => res.json({ message: 'Veriricación exitosa ahora puedes ingresar' }))
     .catch(next);
-}
-
-/**
- * forgot password validate
- */
-function forgotPasswordSchema(req, res, next) {
-  const schema = Joi.object({
-    email: Joi.string().email().required()
-  });
-  validateRequest(req, next, schema);
 }
 
 /**
@@ -112,18 +64,6 @@ function forgotPassword(req, res, next) {
 }
 
 /**
- * Validate reset password Schema
- */
-function resetPasswordSchema(req, res, next) {
-  const schema = Joi.object({
-    token: Joi.string().required(),
-    password: Joi.string().min(6).required(),
-    confirmPassword: Joi.string().valid(Joi.ref('password')).required()
-  });
-  validateRequest(req, next, schema);
-}
-
-/**
  * Validate the Reset token sent to email
  */
 function validateResetToken(req, res, next) {
@@ -131,16 +71,6 @@ function validateResetToken(req, res, next) {
     .validateResetToken(req.body)
     .then(() => res.json({ message: 'Token válido' }))
     .catch(next);
-}
-
-/**
- * Validate Schema the reset token sent to email to create new password
- */
-function validateResetTokenSchema(req, res, next) {
-  const schema = Joi.object({
-    token: Joi.string().required()
-  });
-  validateRequest(req, next, schema);
 }
 
 /**
