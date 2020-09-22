@@ -16,8 +16,8 @@ async function addEvent(params) {
     throw `Evento "${params.name}" ya está registrado`;
   }
 
-  if (await db.Event.findOne({ shortName: params.shortName })) {
-    throw `Nombre corto de evento "${params.shortName}" ya está registrado`;
+  if (await db.Event.findOne({ slug: params.slug })) {
+    throw `Nombre corto de evento "${params.slug}" ya está registrado`;
   }
 
   const event = new db.Event(params);
@@ -34,10 +34,7 @@ async function updateEvent(id, params) {
 
   if (event.name !== params.name && (await db.User.findOne({ name: params.name }))) {
     throw `Evento "${params.name}" ya existe`;
-  } else if (
-    event.shortName !== params.shortName &&
-    (await db.User.findOne({ shortName: params.shortName }))
-  ) {
+  } else if (event.slug !== params.slug && (await db.User.findOne({ slug: params.slug }))) {
     throw `Nombre corto evento "${params.name}" ya existe`;
   }
 
@@ -60,9 +57,9 @@ async function getById(id) {
   return event;
 }
 
-/** Get Event by shortName */
-async function getByShortName(shortName) {
-  const event = await db.Event.findOne({ shortName: shortName })
+/** Get Event by slug */
+async function getByShortName(slug) {
+  const event = await db.Event.findOne({ slug: slug })
     .collation({
       // case-insensitive
       locale: 'en',

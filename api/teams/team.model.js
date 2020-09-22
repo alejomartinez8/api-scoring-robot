@@ -26,6 +26,7 @@ const teamSchema = new Schema({
       birthday: { type: Date }
     }
   ],
+  actived: { type: Boolean },
   created: { type: Date, default: Date.now },
   updated: Date
 });

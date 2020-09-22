@@ -14,7 +14,7 @@ router.post(
     authorize(Role.Admin),
     [
       check('name', 'Nombre es requerido').not().isEmpty(),
-      check('shortName', 'Nombre corto es requerido').not().isEmpty()
+      check('slug', 'Slug es requerido').not().isEmpty()
     ]
   ],
   (req, res, next) => {
@@ -37,7 +37,7 @@ router.post(
     authorize(Role.Admin),
     [
       check('name', 'Nombre es requerido').not().isEmpty(),
-      check('shortName', 'Nombre corto es requerido').not().isEmpty()
+      check('slug', 'Slug es requerido').not().isEmpty()
     ]
   ],
   (req, res, next) => {
@@ -61,10 +61,10 @@ router.get('/:id', authorize(Role.Admin), (req, res, next) => {
     .catch(next);
 });
 
-/** Get Event by shortName */
-router.get('/shortName/:shortName', (req, res, next) => {
+/** Get Event by slug */
+router.get('/slug/:slug', (req, res, next) => {
   eventsService
-    .getByShortName(req.params.shortName)
+    .getByShortName(req.params.slug)
     .then((event) => res.json(event))
     .catch(next);
 });

@@ -14,7 +14,7 @@ router.post(
     authorize(Role.Admin),
     [
       check('name', 'Nombre es requerido').not().isEmpty(),
-      check('version', 'Código reto requerido').not().isEmpty()
+      check('slug', 'Slug requerido').not().isEmpty()
     ]
   ],
   (req, res, next) => {
@@ -37,7 +37,7 @@ router.post(
     authorize(Role.Admin),
     [
       check('name', 'Nombre es requerido').not().isEmpty(),
-      check('version', 'Nombre corto es requerido').not().isEmpty()
+      check('slug', 'Slug requerido').not().isEmpty()
     ]
   ],
   (req, res, next) => {

@@ -41,8 +41,8 @@ async function updateTeam(id, params) {
 /** Get All Teams */
 async function getAllTeams() {
   const teams = await db.Team.find()
-    .populate({ path: 'event', select: 'shortName' })
-    .populate({ path: 'user', select: 'firstName lastName' })
+    .populate({ path: 'event', select: 'slug' })
+    .populate('user')
     .populate({ path: 'challenge', select: 'name' })
     .exec();
   return teams.map((team) => team);
