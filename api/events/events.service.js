@@ -5,7 +5,7 @@ module.exports = {
   updateEvent,
   getAllEvents,
   getById,
-  getByShortName,
+  getBySlug,
   deleteEvent
 };
 
@@ -58,7 +58,7 @@ async function getById(id) {
 }
 
 /** Get Event by slug */
-async function getByShortName(slug) {
+async function getBySlug(slug) {
   const event = await db.Event.findOne({ slug: slug })
     .collation({
       // case-insensitive

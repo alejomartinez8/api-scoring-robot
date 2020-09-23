@@ -64,12 +64,12 @@ router.get('/:id', authorize(Role.Admin), (req, res, next) => {
 /** Get Event by slug */
 router.get('/slug/:slug', (req, res, next) => {
   eventsService
-    .getByShortName(req.params.slug)
+    .getBySlug(req.params.slug)
     .then((event) => res.json(event))
     .catch(next);
 });
 
-/** Get All Events */
+/** Get Events by Slug, get all Events */
 router.get('/', (req, res, next) => {
   eventsService
     .getAllEvents()

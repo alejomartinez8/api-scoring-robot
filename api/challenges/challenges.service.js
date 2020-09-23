@@ -5,6 +5,7 @@ module.exports = {
   updateChallenge,
   getAllChallenges,
   getById,
+  getBySlug,
   deleteChallenge
 };
 
@@ -26,10 +27,7 @@ async function updateChallenge(id, params) {
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
 
-  if (
-    challenge.version !== params.version &&
-    (await db.User.findOne({ version: params.version }))
-  ) {
+  if (challenge.slug !== params.slug && (await db.User.findOne({ slug: params.slug }))) {
     throw `Código de reto "${params.name}" ya registrado`;
   }
 
@@ -52,6 +50,18 @@ async function getById(id) {
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
   return challenge;
+}
+
+/** Get Challenge by slug */
+async function getBySlug(slug) {
+  const event = await db.Challenge.findOne({ slug: slug }).collation({
+    // case-insensitive
+    locale: 'en',
+    strength: 2
+  });
+
+  if (!event) throw 'Reto no encontrado';
+  return event;
 }
 
 /**Delete Challenge by Id */

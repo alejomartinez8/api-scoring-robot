@@ -61,14 +61,21 @@ router.get('/:id', authorize(), (req, res, next) => {
     .catch(next);
 });
 
-/** Get All Challenges */
+/** Get Challenges by Slug, get all Challenges */
 router.get('/', authorize(), (req, res, next) => {
-  challengesService
-    .getAllChallenges()
-    .then((challenges) => {
-      res.json(challenges);
-    })
-    .catch(next);
+  if (req.query.slug) {
+    challengesService
+      .getBySlug(req.query.slug)
+      .then((challenge) => res.json(challenge))
+      .catch(next);
+  } else {
+    challengesService
+      .getAllChallenges()
+      .then((challenges) => {
+        res.json(challenges);
+      })
+      .catch(next);
+  }
 });
 
 /** Delete Challenge */

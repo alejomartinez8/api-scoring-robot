@@ -49,7 +49,6 @@ async function register(params, origin) {
   if (await db.User.findOne({ email: params.email })) {
     // send already registered error in email to prevent user enumeration
     await sendAlreadyRegisteredEmail(params.email, origin);
-    console.log('email ya registrado');
     throw 'Email ya registrado, revisa tu correo electrónico para restablecer tu contraseña';
   }
 

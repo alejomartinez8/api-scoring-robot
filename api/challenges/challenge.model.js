@@ -8,6 +8,13 @@ const challengeSchema = new Schema({
   description: { type: String },
   playoffs: { type: Boolean, required: true },
   categories: [{ type: String }],
+  tasks: [
+    {
+      label: { type: String },
+      points: { type: Number },
+      penalty: { type: Number }
+    }
+  ],
   available: { type: Boolean, required: true },
   created: { type: Date, default: Date.now },
   updated: Date
