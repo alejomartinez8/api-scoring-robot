@@ -9,8 +9,10 @@ const connectionOptions = {
   useFindAndModify: false
 };
 
-mongoose.connect(process.env.MONGODB_URI || config.connectionString, connectionOptions);
-mongoose.Promise = global.Promise;
+mongoose
+  .connect(process.env.MONGODB_URI || config.connectionString, connectionOptions)
+  .then(() => console.log('MongoDB connected'))
+  .catch((error) => console.error(error));
 
 module.exports = {
   User: require('../api/auth/user.model'),

@@ -15,6 +15,7 @@ const challengeSchema = new Schema({
       penalty: { type: Number }
     }
   ],
+  taskSecuence: { type: Boolean },
   available: { type: Boolean, required: true },
   created: { type: Date, default: Date.now },
   updated: Date
