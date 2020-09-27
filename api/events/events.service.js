@@ -32,9 +32,9 @@ async function updateEvent(id, params) {
   const event = await db.Event.findById(id);
   if (!event) throw 'Evento no encontrado';
 
-  if (event.name !== params.name && (await db.User.findOne({ name: params.name }))) {
+  if (event.name !== params.name && (await db.Event.findOne({ name: params.name }))) {
     throw `Evento "${params.name}" ya existe`;
-  } else if (event.slug !== params.slug && (await db.User.findOne({ slug: params.slug }))) {
+  } else if (event.slug !== params.slug && (await db.Event.findOne({ slug: params.slug }))) {
     throw `Nombre corto evento "${params.name}" ya existe`;
   }
 

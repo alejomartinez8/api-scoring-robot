@@ -26,7 +26,7 @@ async function updateTeam(id, params) {
   const team = await db.Team.findById(id);
   if (!team) throw 'Equipo no encontrado';
 
-  if (team.name !== params.name && (await db.User.findOne({ name: params.name }))) {
+  if (team.name !== params.name && (await db.Team.findOne({ name: params.name }))) {
     throw `Equipo "${params.name}" ya existe`;
   }
 

@@ -11,9 +11,10 @@ module.exports = {
 
 /** Add an Challenge */
 async function addChallenge(params) {
+  console.log('addChallenge params:', params);
   // validate
-  if (await db.Challenge.findOne({ version: params.version })) {
-    throw `Código de reto "${params.version}" ya registrado`;
+  if (await db.Challenge.findOne({ slug: params.slug })) {
+    throw `Slug "${params.version}" ya registrado`;
   }
 
   const challenge = new db.Challenge(params);
@@ -23,12 +24,13 @@ async function addChallenge(params) {
 
 /** Update an Challenge */
 async function updateChallenge(id, params) {
+  console.log(params);
   if (!db.isValidId(id)) throw 'Id de reto no válido';
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
 
-  if (challenge.slug !== params.slug && (await db.User.findOne({ slug: params.slug }))) {
-    throw `Código de reto "${params.name}" ya registrado`;
+  if (challenge.slug !== params.slug && (await db.Challenge.findOne({ slug: params.slug }))) {
+    throw `Slug "${params.name}" ya registrado`;
   }
 
   Object.assign(challenge, params);
@@ -54,11 +56,12 @@ async function getById(id) {
 
 /** Get Challenge by slug */
 async function getBySlug(slug) {
-  const event = await db.Challenge.findOne({ slug: slug }).collation({
-    // case-insensitive
-    locale: 'en',
-    strength: 2
-  });
+  const event = await db.Challenge.findBySlug(slug);
+  // .collation({
+  //   // case-insensitive
+  //   locale: 'en',
+  //   strength: 2
+  // });
 
   if (!event) throw 'Reto no encontrado';
   return event;

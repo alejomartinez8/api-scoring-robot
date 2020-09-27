@@ -21,4 +21,8 @@ const challengeSchema = new Schema({
   updated: Date
 });
 
+challengeSchema.static('findBySlug', function (slug) {
+  return this.findOne({ slug: slug });
+});
+
 module.exports = mongoose.model('challenge', challengeSchema);

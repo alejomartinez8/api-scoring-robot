@@ -39,9 +39,9 @@ userSchema.virtual('isVerified').get(function () {
   return !!(this.verified || this.passwordReset);
 });
 
-// userSchema.virtual('isVerified').get(() => {
-//   return !!(this.verified || this.passwordReset);
-// });
+userSchema.virtual('fullName').get(function () {
+  return this.firstName + ' ' + this.lastName;
+});
 
 userSchema.set('toJSON', {
   virtuals: true,
