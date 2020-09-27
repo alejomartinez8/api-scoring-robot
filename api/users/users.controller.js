@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const authorize = require('middleware/authorize');
-const Role = require('helpers/role');
+const authorize = require('../../middleware/authorize');
+const Role = require('../../helpers/role');
 const userService = require('./user.service');
 
 module.exports = router;

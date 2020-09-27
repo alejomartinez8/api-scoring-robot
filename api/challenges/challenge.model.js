@@ -8,6 +8,8 @@ const challengeSchema = new Schema({
   description: { type: String },
   playoffs: { type: Boolean, required: true },
   categories: [{ type: String }],
+  maxTime: Number,
+  bonusType: String,
   tasks: [
     {
       label: { type: String },

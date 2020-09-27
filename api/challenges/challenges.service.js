@@ -1,4 +1,4 @@
-const db = require('helpers/db');
+const db = require('../../helpers/db');
 
 module.exports = {
   addChallenge,
@@ -11,7 +11,6 @@ module.exports = {
 
 /** Add an Challenge */
 async function addChallenge(params) {
-  console.log('addChallenge params:', params);
   // validate
   if (await db.Challenge.findOne({ slug: params.slug })) {
     throw `Slug "${params.version}" ya registrado`;
@@ -24,7 +23,6 @@ async function addChallenge(params) {
 
 /** Update an Challenge */
 async function updateChallenge(id, params) {
-  console.log(params);
   if (!db.isValidId(id)) throw 'Id de reto no válido';
   const challenge = await db.Challenge.findById(id);
   if (!challenge) throw 'Reto no encontrado';
@@ -57,11 +55,6 @@ async function getById(id) {
 /** Get Challenge by slug */
 async function getBySlug(slug) {
   const event = await db.Challenge.findBySlug(slug);
-  // .collation({
-  //   // case-insensitive
-  //   locale: 'en',
-  //   strength: 2
-  // });
 
   if (!event) throw 'Reto no encontrado';
   return event;

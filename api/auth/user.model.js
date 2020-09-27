@@ -10,14 +10,6 @@ const userSchema = new Schema({
   city: { type: String },
   country: { type: String },
   bio: { type: String },
-  social: {
-    youtube: { type: String },
-    twitter: { type: String },
-    facebook: { type: String },
-    linkedin: { type: String },
-    instagram: { type: String },
-    github: { type: String }
-  },
   teams: [
     {
       type: Schema.Types.ObjectId,

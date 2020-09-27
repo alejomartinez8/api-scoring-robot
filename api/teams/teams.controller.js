@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const authorize = require('middleware/authorize');
+const authorize = require('../../middleware/authorize');
 const teamsService = require('./teams.service');
-const Role = require('helpers/role');
+const Role = require('../../helpers/role');
 const { check, validationResult } = require('express-validator');
 
 module.exports = router;
