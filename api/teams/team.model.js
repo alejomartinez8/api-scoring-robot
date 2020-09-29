@@ -43,4 +43,12 @@ const teamSchema = new Schema({
   updated: Date
 });
 
+teamSchema.virtual('turnCounter').get(function () {
+  return this.turns.length;
+});
+
+teamSchema.set('toJSON', {
+  virtuals: true
+});
+
 module.exports = mongoose.model('team', teamSchema);
