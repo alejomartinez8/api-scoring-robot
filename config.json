@@ -1,0 +1,13 @@
+{
+  "connectionString": "mongodb+srv://competitions:34GwgZPdoXOxeTdm@competitionssoftware.ktcpg.mongodb.net/<dbname>?retryWrites=true&w=majority",
+  "secret": "5fa8c695-f777-4c6a-bff0-776c01a6972b",
+  "emailFrom": "info@node-mongo-signup-verification-api.com",
+  "smtpOptions": {
+    "host": "smtp.ethereal.email",
+    "port": 587,
+    "auth": {
+      "user": "randi.bosco@ethereal.email",
+      "pass": "1BnnuG4JRejfs7qDbq"
+    }
+  }
+}
