@@ -8,7 +8,9 @@ const challengeSchema = new Schema({
   description: { type: String },
   playoffs: { type: Boolean, required: true },
   categories: [{ type: String }],
-  maxTime: Number,
+  maxTeams: Number,
+  maxTurns: Number,
+  topMaxTurns: Number,
   bonusType: String,
   tasks: [
     {
@@ -17,6 +19,7 @@ const challengeSchema = new Schema({
       penalty: { type: Number }
     }
   ],
+  maxTime: Number,
   taskSecuence: { type: Boolean },
   available: { type: Boolean, required: true },
   created: { type: Date, default: Date.now },

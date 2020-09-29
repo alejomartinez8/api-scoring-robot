@@ -3,7 +3,7 @@ const db = require('../../helpers/db');
 module.exports = {
   addTeam,
   updateTeam,
-  getAllTeams,
+  getTeams,
   getTeamById,
   deleteTeam
 };
@@ -24,25 +24,34 @@ async function addTeam(params) {
 async function updateTeam(id, params) {
   if (!db.isValidId(id)) throw 'Id de equipo no válido';
   const team = await db.Team.findById(id);
-  if (!team) throw 'Equipo no encontrado';
+  if (!team) {
+    throw 'Equipo no encontrado';
+  }
 
   if (team.name !== params.name && (await db.Team.findOne({ name: params.name }))) {
     throw `Equipo "${params.name}" ya existe`;
   }
 
-  Object.assign(team, params);
+  if (params.turns) {
+    const { tasks, penalties, taskPoints, bonusPoints, totalPoints } = params.turns;
+    const newTurn = { tasks, penalties, taskPoints, bonusPoints, totalPoints };
+    team.turns.unshift(newTurn);
+  } else {
+    Object.assign(team, params);
+  }
+
   team.updated = Date.now();
   await team.save();
 
   return team;
 }
 
-/** Get All Teams */
-async function getAllTeams(query) {
+/** Get Teams */
+async function getTeams(query) {
   const teams = await db.Team.find(query)
-    .populate({ path: 'event', select: 'slug' })
     .populate('user')
-    .populate({ path: 'challenge', select: 'name' })
+    .populate({ path: 'event', select: 'slug' })
+    .populate({ path: 'challenge', select: 'slug' })
     .exec();
   return teams.map((team) => team);
 }
@@ -62,3 +71,5 @@ async function deleteTeam(id) {
   if (!team) throw 'Equipo no encontrado';
   await team.remove();
 }
+
+/** Scores */

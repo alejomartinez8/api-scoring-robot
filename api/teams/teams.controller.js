@@ -30,6 +30,7 @@ router.post(
   [authorize(), [check('name', 'Nombre es requerido').not().isEmpty()]],
   (req, res, next) => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       return next({ errors: errors.array() });
     }
@@ -49,10 +50,10 @@ router.get('/:id', authorize(), (req, res, next) => {
     .catch(next);
 });
 
-/** Get All Teams */
+/** Get Teams */
 router.get('/', (req, res, next) => {
   teamsService
-    .getAllTeams(req.query)
+    .getTeams(req.query)
     .then((teams) => {
       res.json(teams);
     })

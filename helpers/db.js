@@ -19,7 +19,6 @@ module.exports = {
   Event: require('../api/events/event.model'),
   Challenge: require('../api/challenges/challenge.model'),
   Team: require('../api/teams/team.model'),
-  Score: require('../api/scores/score.model'),
   isValidId,
   convertToObjectId
 };

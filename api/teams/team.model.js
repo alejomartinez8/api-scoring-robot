@@ -3,30 +3,42 @@ const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
   user: {
-    type: Schema.Types.ObjectId,
-    ref: 'user'
+    _id: { type: Schema.Types.ObjectId, ref: 'user' },
+    fullName: String,
+    institution: String,
+    city: String,
+    country: String
   },
   event: {
-    type: Schema.Types.ObjectId,
-    ref: 'event'
+    _id: { type: Schema.Types.ObjectId, ref: 'event' },
+    slug: String,
+    name: String
   },
   challenge: {
-    type: Schema.Types.ObjectId,
-    ref: 'challenge'
+    _id: { type: Schema.Types.ObjectId, ref: 'challenge' },
+    name: String,
+    slug: String
   },
-  category: {
-    type: String
-  },
-  name: { type: String },
-  institution: { type: String },
+  category: String,
+  name: String,
+  institution: String,
   players: [
     {
-      name: { type: String },
-      legalId: { type: String },
-      birthday: { type: Date }
+      name: String,
+      legalId: String,
+      birthday: Date
     }
   ],
-  actived: { type: Boolean },
+  turns: [
+    {
+      tasks: [Boolean],
+      penalties: [Boolean],
+      taskPoints: Number,
+      bonusPoints: Number,
+      totalPoints: Number
+    }
+  ],
+  actived: Boolean,
   created: { type: Date, default: Date.now },
   updated: Date
 });
