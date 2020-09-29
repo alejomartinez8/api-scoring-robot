@@ -62,7 +62,7 @@ router.get('/:id', authorize(), (req, res, next) => {
 });
 
 /** Get Challenges by Slug, get all Challenges */
-router.get('/', authorize(), (req, res, next) => {
+router.get('/', (req, res, next) => {
   if (req.query.slug) {
     challengesService
       .getBySlug(req.query.slug)
