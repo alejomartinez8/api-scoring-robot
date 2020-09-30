@@ -42,6 +42,14 @@ router.post(
   }
 );
 
+/** Register a Team */
+router.put('/register/:id', (req, res, next) => {
+  teamsService
+    .registerTeam(req.params.id)
+    .then((team) => res.json(team))
+    .catch(next);
+});
+
 /** Get Team by Id */
 router.get('/:id', authorize(), (req, res, next) => {
   teamsService

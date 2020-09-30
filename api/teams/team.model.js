@@ -18,7 +18,7 @@ const teamSchema = new Schema({
       totalPoints: Number
     }
   ],
-  actived: Boolean,
+  registered: Boolean,
   created: { type: Date, default: Date.now },
   updated: Date
 });

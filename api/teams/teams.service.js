@@ -3,6 +3,7 @@ const db = require('../../helpers/db');
 module.exports = {
   addTeam,
   updateTeam,
+  registerTeam,
   getTeams,
   getTeamById,
   deleteTeam
@@ -43,6 +44,21 @@ async function updateTeam(id, params) {
   team.updated = Date.now();
   await team.save();
 
+  return team;
+}
+
+/** Register Team */
+async function registerTeam(id) {
+  if (!db.isValidId(id)) {
+    throw 'Id de equipo no válido';
+  }
+
+  const team = await db.Team.findById(id);
+  if (!team) {
+    throw 'Equipo no encontrado';
+  }
+  team.registered = !team.registered;
+  team.save();
   return team;
 }
 
