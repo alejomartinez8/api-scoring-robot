@@ -1,3 +1,4 @@
+const config = require('../config');
 const mongoose = require('mongoose');
 
 // Connections Options Mongo DB
@@ -9,7 +10,7 @@ const connectionOptions = {
 };
 
 mongoose
-  .connect(process.env.MONGODB_URI, connectionOptions)
+  .connect(process.env.MONGODB_URI || config.connectionString, connectionOptions)
   .then(() => console.log('MongoDB connected'))
   .catch((error) => console.error(error));
 

@@ -1,4 +1,5 @@
 module.exports = {
+  connectionString: process.env.MONGODB_URI,
   secret: process.env.JWT_SECRET,
   emailFrom: process.env.EMAIL_FROM,
   smtpOptions: {
@@ -6,7 +7,7 @@ module.exports = {
     port: process.env.SMTP_PORT,
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
+      pass: process.env.PASS
     }
   }
 };
