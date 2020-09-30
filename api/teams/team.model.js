@@ -2,33 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
-  user: {
-    _id: { type: Schema.Types.ObjectId, ref: 'user' },
-    fullName: String,
-    institution: String,
-    city: String,
-    country: String
-  },
-  event: {
-    _id: { type: Schema.Types.ObjectId, ref: 'event' },
-    slug: String,
-    name: String
-  },
-  challenge: {
-    _id: { type: Schema.Types.ObjectId, ref: 'challenge' },
-    name: String,
-    slug: String
-  },
+  user: { type: Schema.Types.ObjectId, ref: 'user' },
+  event: { type: Schema.Types.ObjectId, ref: 'event' },
+  challenge: { type: Schema.Types.ObjectId, ref: 'challenge' },
   category: String,
   name: String,
   institution: String,
-  players: [
-    {
-      name: String,
-      legalId: String,
-      birthday: Date
-    }
-  ],
+  players: [{ name: String, legalId: String, birthday: Date }],
   turns: [
     {
       tasks: [Boolean],
