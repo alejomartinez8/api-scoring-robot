@@ -7,6 +7,7 @@ const challengeSchema = new Schema({
   imageURL: { type: String },
   description: { type: String },
   playoffs: { type: Boolean, required: true },
+  finalTeams: Number,
   categories: [{ type: String }],
   maxTeams: Number,
   maxTurns: Number,
