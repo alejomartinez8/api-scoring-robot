@@ -1,5 +1,6 @@
 const jwt = require('express-jwt');
-const { secret } = require('../config.json');
+const { secret } = require('../config');
+
 const db = require('../helpers/db');
 
 // @params  Can be a single role string (e.g. Role.User or 'User') or an array of roles (e.g [Role.Admin, Role.User] or ['Admin', 'user])
