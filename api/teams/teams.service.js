@@ -104,16 +104,24 @@ async function addScore(id, params) {
 
 /** Update turn/score of a Team */
 async function updateScore(scoreId, params) {
-  console.log({ scoreId }, { params });
+  // console.log({ scoreId }, { params });
+  if (!db.isValidId(scoreId)) {
+    throw 'Id no válido';
+  }
+
   const team = await db.Team.findOne({ 'turns._id': scoreId });
   if (!team) {
     throw 'Score no encontrado';
   }
 
-  team.turns.pull(scoreId);
-  team.turns.push(params);
-  // team.turns.set({ _id: scoreId }, params);
-  team.save();
+  const idx = team.turns.findIndex((elm) => elm._id == scoreId);
+  console.log({ idx });
+  if (idx !== -1) {
+    console.log(team.turns[idx]);
+    team.turns[idx] = params;
+    team.save();
+    return team.turns[idx];
+  }
 }
 
 /** Delete turn/score of a Team */
