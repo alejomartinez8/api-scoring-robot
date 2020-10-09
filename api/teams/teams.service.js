@@ -113,7 +113,6 @@ async function updateScore(scoreId, params) {
   team.turns.pull(scoreId);
   team.turns.push(params);
   // team.turns.set({ _id: scoreId }, params);
-  console.log('after', team.turns);
   team.save();
 }
 
