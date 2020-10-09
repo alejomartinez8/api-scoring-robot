@@ -1,10 +1,13 @@
 ﻿const express = require('express');
 require('dotenv').config({ path: __dirname + '/.env' });
+const logger = require('morgan');
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const errorHandler = require('./middleware/error-handler');
+
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());

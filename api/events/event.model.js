@@ -9,6 +9,7 @@ const eventSchema = new Schema({
   description: { type: String },
   categories: [{ type: String }],
   challenges: [{ type: Schema.Types.ObjectId, ref: 'challenge' }],
+  stage: { type: String, default: 'registration' },
   created: { type: Date, default: Date.now },
   updated: Date
 });

@@ -15,9 +15,10 @@ const challengeSchema = new Schema({
   bonusType: String,
   tasks: [
     {
-      label: { type: String },
-      points: { type: Number },
-      penalty: { type: Number }
+      order: Number,
+      label: String,
+      points: String,
+      penalty: String
     }
   ],
   maxTime: Number,

@@ -1,4 +1,5 @@
 const db = require('../../helpers/db');
+const { param } = require('./teams.controller');
 
 module.exports = {
   addTeam,
@@ -6,7 +7,10 @@ module.exports = {
   registerTeam,
   getTeams,
   getTeamById,
-  deleteTeam
+  deleteTeam,
+  addScore,
+  updateScore,
+  deleteScore
 };
 
 /** Add an Team */
@@ -33,14 +37,7 @@ async function updateTeam(id, params) {
     throw `Equipo "${params.name}" ya existe`;
   }
 
-  if (params.turns) {
-    const { tasks, penalties, taskPoints, bonusPoints, totalPoints } = params.turns;
-    const newTurn = { tasks, penalties, taskPoints, bonusPoints, totalPoints };
-    team.turns.unshift(newTurn);
-  } else {
-    Object.assign(team, params);
-  }
-
+  Object.assign(team, params);
   team.updated = Date.now();
   await team.save();
 
@@ -58,17 +55,14 @@ async function registerTeam(id) {
     throw 'Equipo no encontrado';
   }
   team.registered = !team.registered;
+  team.updated = Date.now();
   team.save();
   return team;
 }
 
 /** Get Teams */
 async function getTeams(query) {
-  const teams = await db.Team.find(query)
-    .populate('user')
-    .populate({ path: 'event' })
-    .populate({ path: 'challenge' })
-    .exec();
+  const teams = await db.Team.find(query).populate('user').exec();
   return teams.map((team) => team);
 }
 
@@ -89,3 +83,47 @@ async function deleteTeam(id) {
 }
 
 /** Scores */
+
+/** Add or Update a Turn of a Team */
+async function addScore(id, params) {
+  if (!db.isValidId(id)) {
+    throw 'Id de equipo no válido';
+  }
+
+  const team = await db.Team.findById(id);
+  if (!team) {
+    throw 'Equipo no encontrado';
+  }
+
+  team.turns.push(params);
+  team.updated = Date.now();
+  team.save();
+
+  return team;
+}
+
+/** Update turn/score of a Team */
+async function updateScore(scoreId, params) {
+  console.log({ scoreId }, { params });
+  const team = await db.Team.findOne({ 'turns._id': scoreId });
+  if (!team) {
+    throw 'Score no encontrado';
+  }
+
+  team.turns.pull(scoreId);
+  team.turns.push(params);
+  // team.turns.set({ _id: scoreId }, params);
+  console.log('after', team.turns);
+  team.save();
+}
+
+/** Delete turn/score of a Team */
+async function deleteScore(scoreId) {
+  const team = await db.Team.findOne({ 'turns._id': scoreId });
+  if (!team) {
+    throw 'Score no encontrado';
+  }
+
+  team.turns.pull(scoreId);
+  team.save();
+}

@@ -153,21 +153,7 @@ function randomTokenString() {
  */
 function basicDetails(user) {
   //values
-  const {
-    id,
-    title,
-    firstName,
-    lastName,
-    email,
-    role,
-    institution,
-    city,
-    country,
-    bio,
-    created,
-    updated,
-    isVerified
-  } = user;
+  const { id, title, firstName, lastName, email, role, institution, city, country, bio, created, updated, isVerified } = user;
 
   // return
   return {
@@ -191,7 +177,7 @@ function basicDetails(user) {
 async function sendVerificationEmail(user, origin) {
   let message;
   if (origin) {
-    const verifyUrl = `${origin}/user/verify-email?token=${user.verificationToken}`;
+    const verifyUrl = `${origin}/auth/verify-email?token=${user.verificationToken}`;
     message = `<p>Haga clic en el enlace a continuación para verificar su dirección de correo electrónico:</p>
                  <p><a href="${verifyUrl}">${verifyUrl}</a></p>`;
   } else {
@@ -235,7 +221,7 @@ async function sendAlreadyRegisteredEmail(email, origin) {
 async function sendPasswordResetEmail(user, origin) {
   let message;
   if (origin) {
-    const resetUrl = `${origin}/user/reset-password?token=${user.resetToken.token}`;
+    const resetUrl = `${origin}/auth/reset-password?token=${user.resetToken.token}`;
     message = `<p>Haga clic en el enlace de abajo para restablecer su contraseña, el enlace será válido por 1 día:</p>
                  <p><a href="${resetUrl}">${resetUrl}</a></p>`;
   } else {
@@ -245,7 +231,7 @@ async function sendPasswordResetEmail(user, origin) {
 
   await sendEmail({
     to: user.email,
-    subject: 'Scoring Robot Pygmalion - Restablecer',
+    subject: 'Scoring Robot  - Restablecer',
     html: `<h4>Reset Password Email</h4>
              ${message}`
   });

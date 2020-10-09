@@ -1,7 +1,7 @@
 {
   "name": "api-scoring-robot",
   "version": "3.0.0",
-  "description": "Software for Robotics Competitions of Pygmalion v3.0",
+  "description": "Software for Robotics Competitions v3.0",
   "main": "server.js",
   "scripts": {
     "start": "node server",
@@ -25,6 +25,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.4"
   },
   "engines": {
