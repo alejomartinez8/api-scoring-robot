@@ -76,7 +76,10 @@ async function getTeamById(id) {
 
 /**Delete Team by Id */
 async function deleteTeam(id) {
-  if (!db.isValidId(id)) throw 'Id de equipo no válido';
+  if (!db.isValidId(id)) {
+    throw 'Id no válido';
+  }
+
   const team = await db.Team.findById(id);
   if (!team) throw 'Equipo no encontrado';
   await team.remove();
@@ -126,6 +129,10 @@ async function updateScore(scoreId, params) {
 
 /** Delete turn/score of a Team */
 async function deleteScore(scoreId) {
+  if (!db.isValidId(scoreId)) {
+    throw 'Id no válido';
+  }
+
   const team = await db.Team.findOne({ 'turns._id': scoreId });
   if (!team) {
     throw 'Score no encontrado';

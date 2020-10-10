@@ -10,13 +10,7 @@ module.exports = router;
 /** Add an Event */
 router.post(
   '/',
-  [
-    authorize(Role.Admin),
-    [
-      check('name', 'Nombre es requerido').not().isEmpty(),
-      check('slug', 'Slug es requerido').not().isEmpty()
-    ]
-  ],
+  [authorize(Role.Admin), [check('name', 'Nombre es requerido').not().isEmpty(), check('slug', 'Slug es requerido').not().isEmpty()]],
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -33,13 +27,7 @@ router.post(
 /** Update an Event */
 router.post(
   '/:id',
-  [
-    authorize(Role.Admin),
-    [
-      check('name', 'Nombre es requerido').not().isEmpty(),
-      check('slug', 'Slug es requerido').not().isEmpty()
-    ]
-  ],
+  [authorize(Role.Admin), [check('name', 'Nombre es requerido').not().isEmpty(), check('slug', 'Slug es requerido').not().isEmpty()]],
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -84,5 +72,13 @@ router.delete('/:id', authorize(Role.Admin), (req, res, next) => {
   eventsService
     .deleteEvent(req.params.id)
     .then(() => res.json({ message: 'Evento Eliminado' }))
+    .catch(next);
+});
+
+/** Activate an Event */
+router.put('/active/:id', (req, res, next) => {
+  eventsService
+    .toggleActiveEvent(req.params.id)
+    .then((team) => res.json(team))
     .catch(next);
 });

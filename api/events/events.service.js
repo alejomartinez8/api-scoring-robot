@@ -6,7 +6,8 @@ module.exports = {
   getAllEvents,
   getById,
   getBySlug,
-  deleteEvent
+  deleteEvent,
+  toggleActiveEvent
 };
 
 /** Add an Event */
@@ -48,11 +49,7 @@ async function updateEvent(id, params) {
 /** Get Event by Id */
 async function getById(id) {
   if (!db.isValidId(id)) throw 'Id de evento no válido';
-  const event = await db.Event.findById(id).populate('challenges', [
-    'name',
-    'imageURL',
-    'available'
-  ]);
+  const event = await db.Event.findById(id).populate('challenges', ['name', 'imageURL', 'available']);
   if (!event) throw 'Evento no encontrado';
   return event;
 }
@@ -83,4 +80,23 @@ async function deleteEvent(id) {
   const event = await db.Event.findById(id);
   if (!event) throw 'Evento no encontrado';
   await event.remove();
+}
+
+/** Active Event */
+async function toggleActiveEvent(id) {
+  if (!db.isValidId(id)) {
+    throw 'Id no válido';
+  }
+
+  const event = await db.Event.findById(id);
+  if (!event) {
+    throw 'Evento no encontrado';
+  }
+
+  console.log(event.active);
+
+  event.active = !event.active;
+  event.updated = Date.now();
+  event.save();
+  return event;
 }
