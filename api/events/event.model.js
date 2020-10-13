@@ -11,6 +11,8 @@ const eventSchema = new Schema({
   challenges: [{ type: Schema.Types.ObjectId, ref: 'challenge' }],
   stage: { type: String, default: 'registration' },
   active: { type: Boolean, default: true },
+  maxPlayersTeam: { type: Number, default: 1 },
+  minPlayersTeam: { type: Number, default: 1 },
   created: { type: Date, default: Date.now },
   updated: Date
 });

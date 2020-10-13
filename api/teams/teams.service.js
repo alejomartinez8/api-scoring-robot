@@ -62,7 +62,7 @@ async function registerTeam(id) {
 
 /** Get Teams */
 async function getTeams(query) {
-  const teams = await db.Team.find(query).populate('user').exec();
+  const teams = await db.Team.find(query).populate('user').populate('challenge').exec();
   return teams.map((team) => team);
 }
 
