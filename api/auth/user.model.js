@@ -27,14 +27,6 @@ const userSchema = new Schema({
   updated: Date
 });
 
-userSchema.virtual('isVerified').get(function () {
-  return !!(this.verified || this.passwordReset);
-});
-
-userSchema.virtual('fullName').get(function () {
-  return this.firstName + ' ' + this.lastName;
-});
-
 userSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
@@ -42,7 +34,16 @@ userSchema.set('toJSON', {
     // remove these props when object is serialized
     // delete ret._id;
     delete ret.passwordHash;
-  }
+  },
+  id: false
+});
+
+userSchema.virtual('isVerified').get(function () {
+  return !!(this.verified || this.passwordReset);
+});
+
+userSchema.virtual('fullName').get(function () {
+  return this.firstName + ' ' + this.lastName;
 });
 
 module.exports = mongoose.model('user', userSchema);

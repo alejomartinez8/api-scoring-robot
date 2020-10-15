@@ -86,7 +86,10 @@ async function forgotPassword({ email }, origin) {
   const user = await db.User.findOne({ email });
 
   // always return ok response to prevent email enumeration
-  if (!user) return;
+  if (!user) {
+    console.log('email not exists');
+    return;
+  }
 
   // create reset token that expires after 24 hours
   user.resetToken = {
@@ -148,31 +151,6 @@ function randomTokenString() {
   return crypto.randomBytes(40).toString('hex');
 }
 
-/**
- * Return Basic Details of User (filter by BD)
- */
-function basicDetails(user) {
-  //values
-  const { id, title, firstName, lastName, email, role, institution, city, country, bio, created, updated, isVerified } = user;
-
-  // return
-  return {
-    id,
-    title,
-    firstName,
-    lastName,
-    email,
-    role,
-    institution,
-    city,
-    country,
-    bio,
-    created,
-    updated,
-    isVerified
-  };
-}
-
 // Send an Email with the verification token stored on Data Base in field verificationToken, this field is only stored when the user is not verified
 async function sendVerificationEmail(user, origin) {
   let message;
@@ -219,6 +197,8 @@ async function sendAlreadyRegisteredEmail(email, origin) {
  */
 
 async function sendPasswordResetEmail(user, origin) {
+  console.log('sendPasswordResetEmail');
+
   let message;
   if (origin) {
     const resetUrl = `${origin}/auth/reset-password?token=${user.resetToken.token}`;
@@ -231,8 +211,7 @@ async function sendPasswordResetEmail(user, origin) {
 
   await sendEmail({
     to: user.email,
-    subject: 'Scoring Robot  - Restablecer',
-    html: `<h4>Reset Password Email</h4>
-             ${message}`
+    subject: 'Scoring Robot  - Restablecer Contraseña',
+    html: message
   });
 }

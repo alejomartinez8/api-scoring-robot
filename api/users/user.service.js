@@ -81,7 +81,7 @@ async function _delete(id) {
  */
 async function getUser(id) {
   if (!db.isValidId(id)) throw 'User not found';
-  const user = await db.User.findById(id);
+  const user = await db.User.findById(id).select('-passwordHash');
   if (!user) throw 'User not found';
   return user;
 }
