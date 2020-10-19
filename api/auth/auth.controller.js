@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authService = require('./auth.service');
+const passport = require('../../middleware/passport');
 
 module.exports = router;
 
@@ -11,6 +12,7 @@ router.post('/verify-email', verifyEmail);
 router.post('/forgot-password', forgotPassword);
 router.post('/validate-reset-token', validateResetToken);
 router.post('/reset-password', resetPassword);
+router.post('/facebook_token', passport.authenticate('facebook-token'), authFacebookToken);
 
 // login user with email and password
 function login(req, res, next) {
@@ -56,8 +58,7 @@ function forgotPassword(req, res, next) {
     .forgotPassword(req.body, req.get('origin'))
     .then(() =>
       res.json({
-        message:
-          'Por favor revisa tu correo electrónico para recibir instrucciones de como restablecer tu contraseña'
+        message: 'Por favor revisa tu correo electrónico para recibir instrucciones de como restablecer tu contraseña'
       })
     )
     .catch(next);
@@ -80,5 +81,14 @@ function resetPassword(req, res, next) {
   authService
     .resetPassword(req.body)
     .then(() => res.json({ message: 'Contraseña exitosa ya puede acceder' }))
+    .catch(next);
+}
+
+function authFacebookToken(req, res, next) {
+  authService
+    .authFacebookToken(req.user)
+    .then((token) => {
+      res.json(token);
+    })
     .catch(next);
 }

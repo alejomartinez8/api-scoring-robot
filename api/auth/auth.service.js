@@ -12,7 +12,8 @@ module.exports = {
   verifyEmail,
   forgotPassword,
   validateResetToken,
-  resetPassword
+  resetPassword,
+  authFacebookToken
 };
 
 /**
@@ -37,9 +38,19 @@ async function login({ email, password }) {
   const token = generateJwtToken(user);
 
   // return basic details and tokens
-  return {
-    token
-  };
+  return { token };
+}
+
+/** Facebook Auth Token */
+async function authFacebookToken(user) {
+  if (!user) {
+    throw 'Usuario no encontrado';
+  }
+  // authentication successful so generate jwt and refresh tokens
+  const token = generateJwtToken(user);
+
+  // return basic details and tokens
+  return { token };
 }
 
 /**
@@ -140,7 +151,7 @@ function hash(password) {
  */
 function generateJwtToken(user) {
   return jwt.sign({ id: user.id }, config.secret, {
-    expiresIn: '1d'
+    expiresIn: '7d'
   });
 }
 

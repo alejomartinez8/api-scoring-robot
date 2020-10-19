@@ -8,7 +8,7 @@ const teamSchema = new Schema({
   category: String,
   name: String,
   institution: String,
-  players: [{ name: String, legalId: String, birthday: Date }],
+  players: [{ name: String, legalId: String, birthday: { type: Date } }],
   turns: [
     {
       tasks: [Boolean],

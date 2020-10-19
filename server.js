@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const errorHandler = require('./middleware/error-handler');
+const passport = require('./middleware/passport');
 
 if (app.get('env') === 'production') {
   app.use(logger('combined'));
@@ -16,6 +17,7 @@ if (app.get('env') === 'production') {
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(passport.initialize());
 
 // allow cors requests from any origin and with credentials
 app.use(
