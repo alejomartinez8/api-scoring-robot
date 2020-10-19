@@ -13,6 +13,7 @@ module.exports = {
   forgotPassword,
   validateResetToken,
   resetPassword,
+  authGoogleToken,
   authFacebookToken
 };
 
@@ -41,10 +42,22 @@ async function login({ email, password }) {
   return { token };
 }
 
+/** Google Auth Token */
+async function authGoogleToken(user) {
+  if (!user) {
+    throw 'Usuario Google no encontrado';
+  }
+  // authentication successful so generate jwt and refresh tokens
+  const token = generateJwtToken(user);
+
+  // return basic details and tokens
+  return { token };
+}
+
 /** Facebook Auth Token */
 async function authFacebookToken(user) {
   if (!user) {
-    throw 'Usuario no encontrado';
+    throw 'Usuario Facebook no encontrado';
   }
   // authentication successful so generate jwt and refresh tokens
   const token = generateJwtToken(user);

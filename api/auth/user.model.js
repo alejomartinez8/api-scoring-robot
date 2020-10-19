@@ -19,8 +19,8 @@ const userSchema = new Schema({
   verified: Date,
   resetToken: { token: String, expires: Date },
   passwordReset: Date,
-  facebookId: String,
   googleId: String,
+  facebookId: String,
   created: { type: Date, default: Date.now },
   updated: Date
 });
@@ -43,6 +43,36 @@ userSchema.virtual('isVerified').get(function () {
 userSchema.virtual('fullName').get(function () {
   return this.firstName + ' ' + this.lastName;
 });
+
+userSchema.statics.findOneOrCreateByGoogle = function findOneOrCreate(profile, callback) {
+  const self = this;
+  // console.log('findOneOrCreateByGoogle: ', profile);
+  self.findOne(
+    {
+      $or: [{ facebookId: profile.id }, { email: profile.emails[0].value }]
+    },
+    function (err, result) {
+      if (result !== null) {
+        callback(err, result); // if exist on mongoDB
+      } else {
+        let newUser = {};
+        newUser.googleId = profile.id;
+        newUser.firstName = profile._json.given_name || 'No firstName';
+        newUser.lastName = profile._json.family_name || 'No lastName';
+        newUser.email = profile._json.email;
+        newUser.role = 'User';
+        newUser.verified = Date.now();
+        newUser.passwordHash = crypto.randomBytes(16).toString('hex');
+        self.create(newUser, (err, res) => {
+          if (err) {
+            console.error(err);
+          }
+          callback(err, res);
+        });
+      }
+    }
+  );
+};
 
 userSchema.statics.findOneOrCreateByFacebook = function findOneOrCreate(profile, callback) {
   const self = this;

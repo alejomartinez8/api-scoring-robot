@@ -12,7 +12,8 @@ router.post('/verify-email', verifyEmail);
 router.post('/forgot-password', forgotPassword);
 router.post('/validate-reset-token', validateResetToken);
 router.post('/reset-password', resetPassword);
-router.post('/facebook_token', passport.authenticate('facebook-token'), authFacebookToken);
+router.post('/google/token', passport.authenticate('google-token'), authGoogleToken);
+router.post('/facebook/token', passport.authenticate('facebook-token'), authFacebookToken);
 
 // login user with email and password
 function login(req, res, next) {
@@ -87,6 +88,15 @@ function resetPassword(req, res, next) {
 function authFacebookToken(req, res, next) {
   authService
     .authFacebookToken(req.user)
+    .then((token) => {
+      res.json(token);
+    })
+    .catch(next);
+}
+
+function authGoogleToken(req, res, next) {
+  authService
+    .authGoogleToken(req.user)
     .then((token) => {
       res.json(token);
     })
