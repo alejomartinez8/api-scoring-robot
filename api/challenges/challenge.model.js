@@ -13,16 +13,10 @@ const challengeSchema = new Schema({
   maxTurns: Number,
   topMaxTurns: Number,
   bonusType: String,
-  tasks: [
-    {
-      order: Number,
-      label: String,
-      points: String,
-      penalty: String
-    }
-  ],
+  tasks: [{ order: Number, label: String, points: String, penalty: String }],
   maxTime: Number,
-  taskSecuence: { type: Boolean },
+  taskSecuence: { type: Boolean, default: false },
+  stopTime: { type: Boolean, default: false },
   available: { type: Boolean, required: true },
   created: { type: Date, default: Date.now },
   updated: Date
