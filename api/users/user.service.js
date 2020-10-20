@@ -72,8 +72,27 @@ async function update(id, params) {
  * Delete User
  */
 async function _delete(id) {
+  if (!db.isValidId(id)) throw 'User not found';
+  const teams = await db.Team.find({ user: id });
+
+  if (teams.length > 0) {
+    return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este usuario' };
+  }
+
   const user = await getUser(id);
+  if (user.role === 'Admin') {
+    const users = await db.User.find({ role: 'Admin' });
+    if (users.length === 1) {
+      return {
+        type: 'admin-only',
+        message:
+          'No es posible eliminar el único usuario Admin de este sitio, cree otro usuario con perfil de Admin, para eliminar este usuario'
+      };
+    }
+  }
+
   await user.remove();
+  return { type: 'delete-success', message: 'User eliminado satisfactoriamente' };
 }
 
 /**

@@ -71,7 +71,7 @@ router.get('/', (req, res, next) => {
 router.delete('/:id', authorize(Role.Admin), (req, res, next) => {
   eventsService
     .deleteEvent(req.params.id)
-    .then(() => res.json({ message: 'Evento Eliminado' }))
+    .then((response) => res.json(response))
     .catch(next);
 });
 

@@ -160,13 +160,11 @@ async function testEmailConfig(email) {
     throw 'No hay dirección de correo electrónico';
   }
 
-  const res = await sendEmail({
+  return await sendEmail({
     to: email,
-    subject: 'Correo de Prueba',
-    html: '<p>Correo de Prueba desde Gmail</p>'
+    subject: 'Correo de Prueba Scoring-Robot',
+    html: '<p>Correo de Prueba desde Scoring-Robot App</p>'
   });
-
-  console.log({ res });
 }
 
 /**

@@ -10,13 +10,7 @@ module.exports = router;
 /** Add an Challenge */
 router.post(
   '/',
-  [
-    authorize(Role.Admin),
-    [
-      check('name', 'Nombre es requerido').not().isEmpty(),
-      check('slug', 'Slug requerido').not().isEmpty()
-    ]
-  ],
+  [authorize(Role.Admin), [check('name', 'Nombre es requerido').not().isEmpty(), check('slug', 'Slug requerido').not().isEmpty()]],
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -33,13 +27,7 @@ router.post(
 /** Update an Challenge */
 router.post(
   '/:id',
-  [
-    authorize(Role.Admin),
-    [
-      check('name', 'Nombre es requerido').not().isEmpty(),
-      check('slug', 'Slug requerido').not().isEmpty()
-    ]
-  ],
+  [authorize(Role.Admin), [check('name', 'Nombre es requerido').not().isEmpty(), check('slug', 'Slug requerido').not().isEmpty()]],
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -82,6 +70,6 @@ router.get('/', (req, res, next) => {
 router.delete('/:id', authorize(Role.Admin), (req, res, next) => {
   challengesService
     .deleteChallenge(req.params.id)
-    .then(() => res.json({ message: 'Reto Eliminado' }))
+    .then((response) => res.json(response))
     .catch(next);
 });

@@ -29,13 +29,5 @@ async function sendEmail({ to, subject, html, from = config.emailFrom }) {
     }
   });
 
-  transporter.sendMail({ from, to, subject, html }, (err, info) => {
-    console.log('sending email...');
-    if (err) {
-      console.log('error:', err);
-    } else {
-      // console.log(info);
-      return info;
-    }
-  });
+  return await transporter.sendMail({ from, to, subject, html });
 }

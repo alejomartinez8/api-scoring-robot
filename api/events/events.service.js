@@ -77,9 +77,16 @@ async function getAllEvents() {
 /**Delete Event by Id */
 async function deleteEvent(id) {
   if (!db.isValidId(id)) throw 'Id de evento no válido';
+
+  const teams = await db.Team.find({ event: id });
+  if (teams.length > 0) {
+    return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este evento' };
+  }
+
   const event = await db.Event.findById(id);
   if (!event) throw 'Evento no encontrado';
   await event.remove();
+  return { type: 'delete-success' };
 }
 
 /** Active Event */

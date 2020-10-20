@@ -62,8 +62,17 @@ async function getBySlug(slug) {
 
 /**Delete Challenge by Id */
 async function deleteChallenge(id) {
-  if (!db.isValidId(id)) throw 'Id de reto no válido';
-  const challenge = await db.Challenge.findById(id);
-  if (!challenge) throw 'Reto no encontrado';
-  await challenge.remove();
+  if (!db.isValidId(id)) {
+    throw 'Id de reto no válido';
+  }
+
+  const teams = await db.Team.find({ challenge: id });
+  if (teams.length > 0) {
+    return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este reto' };
+  } else {
+    const challenge = await db.Challenge.findById(id);
+    if (!challenge) throw 'Reto no encontrado';
+    await challenge.remove();
+    return { type: 'delete-success' };
+  }
 }
