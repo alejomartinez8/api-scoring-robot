@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const sendEmail = require('../../helpers/send-email');
 const db = require('../../helpers/db');
 const Role = require('../../helpers/role');
+const { response } = require('express');
 
 module.exports = {
   login,
@@ -14,7 +15,8 @@ module.exports = {
   validateResetToken,
   resetPassword,
   authGoogleToken,
-  authFacebookToken
+  authFacebookToken,
+  testEmailConfig
 };
 
 /**
@@ -150,6 +152,21 @@ async function resetPassword({ token, password }) {
   user.passwordReset = Date.now();
   user.resetToken = undefined;
   await user.save();
+}
+
+async function testEmailConfig(email) {
+  console.log(email);
+  if (!email) {
+    throw 'No hay dirección de correo electrónico';
+  }
+
+  const res = await sendEmail({
+    to: email,
+    subject: 'Correo de Prueba',
+    html: '<p>Correo de Prueba desde Gmail</p>'
+  });
+
+  console.log({ res });
 }
 
 /**

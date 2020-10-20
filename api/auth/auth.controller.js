@@ -14,6 +14,7 @@ router.post('/validate-reset-token', validateResetToken);
 router.post('/reset-password', resetPassword);
 router.post('/google/token', passport.authenticate('google-token'), authGoogleToken);
 router.post('/facebook/token', passport.authenticate('facebook-token'), authFacebookToken);
+router.post('/testEmailConfig', testEmailConfig);
 
 // login user with email and password
 function login(req, res, next) {
@@ -47,7 +48,7 @@ function register(req, res, next) {
 function verifyEmail(req, res, next) {
   authService
     .verifyEmail(req.body)
-    .then(() => res.json({ message: 'Veriricación exitosa ahora puedes ingresar' }))
+    .then(() => res.json({ message: 'Verificación exitosa ahora puedes ingresar' }))
     .catch(next);
 }
 
@@ -100,5 +101,12 @@ function authGoogleToken(req, res, next) {
     .then((token) => {
       res.json(token);
     })
+    .catch(next);
+}
+
+function testEmailConfig(req, res, next) {
+  authService
+    .testEmailConfig(req.body.email)
+    .then((response) => res.json(response))
     .catch(next);
 }

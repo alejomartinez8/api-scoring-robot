@@ -1,26 +1,41 @@
 const nodemailer = require('nodemailer');
 const config = require('../config');
+const { google } = require('googleapis');
+const { OAuth2 } = google.auth;
 
 module.exports = sendEmail;
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
+const OAUTH_PLAYGROUND = 'https://developers.google.com/oauthplayground';
 
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+const { GOOGLE_ID, GOOGLE_SECRET, GMAIL_REFRESH_TOKEN, EMAIL_FROM } = process.env;
+
+const oauth2Client = new OAuth2(GOOGLE_ID, GOOGLE_SECRET, OAUTH_PLAYGROUND);
 
 async function sendEmail({ to, subject, html, from = config.emailFrom }) {
-  await transporter.sendMail({ from, to, subject, html }, (err, info) => {
-    console.log('SenMail');
+  oauth2Client.setCredentials({
+    refresh_token: GMAIL_REFRESH_TOKEN
+  });
+  const res = await oauth2Client.getAccessToken();
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: EMAIL_FROM,
+      clientID: GOOGLE_ID,
+      clientSecret: GOOGLE_SECRET,
+      refreshToken: GMAIL_REFRESH_TOKEN,
+      accessToken: res.token
+    }
+  });
+
+  transporter.sendMail({ from, to, subject, html }, (err, info) => {
+    console.log('sending email...');
     if (err) {
       console.log('error:', err);
     } else {
-      console.log(info.envelope);
-      console.log(info.messageId);
+      // console.log(info);
+      return info;
     }
   });
 }
