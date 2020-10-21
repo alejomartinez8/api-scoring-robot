@@ -147,7 +147,7 @@ async function resetPassword({ token, password }) {
 
   if (!user) throw 'Invalid token';
 
-  // update password and remove reset token
+  // update password and delete reset token
   user.passwordHash = hash(password);
   user.passwordReset = Date.now();
   user.resetToken = undefined;

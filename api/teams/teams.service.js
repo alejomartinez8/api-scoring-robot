@@ -63,6 +63,7 @@ async function registerTeam(id) {
 /** Get Teams */
 async function getTeams(query) {
   const teams = await db.Team.find(query).populate('user').populate('challenge').populate('event').exec();
+  console.log(teams);
   return teams.map((team) => team);
 }
 
@@ -80,9 +81,8 @@ async function deleteTeam(id) {
     throw 'Id no válido';
   }
 
-  const team = await db.Team.findById(id);
+  const team = await db.Team.findOneAndDelete(id);
   if (!team) throw 'Equipo no encontrado';
-  await team.remove();
 }
 
 /** Scores */

@@ -76,23 +76,24 @@ async function getAllEvents() {
 
 /**Delete Event by Id */
 async function deleteEvent(id) {
-  if (!db.isValidId(id)) throw 'Id de evento no válido';
+  if (!db.isValidId(id)) {
+    throw 'Id de evento no válido';
+  }
 
   const teams = await db.Team.find({ event: id });
   if (teams.length > 0) {
     return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este evento' };
+  } else {
+    const event = await db.Event.findOneAndDelete(id);
+    if (!event) throw 'Evento no encontrado';
+    return { type: 'delete-success' };
   }
-
-  const event = await db.Event.findById(id);
-  if (!event) throw 'Evento no encontrado';
-  await event.remove();
-  return { type: 'delete-success' };
 }
 
 /** Active Event */
 async function toggleActiveEvent(id) {
   if (!db.isValidId(id)) {
-    throw 'Id no válido';
+    throw 'Id Evento no válido';
   }
 
   const event = await db.Event.findById(id);

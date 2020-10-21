@@ -6,6 +6,7 @@ const db = require('../helpers/db');
 // @desc    Authorize middleware, validate role and token if exist
 
 function authorize(roles = []) {
+  // console.log(roles);
   // convert string to array
   if (typeof roles === 'string') {
     roles = [roles];

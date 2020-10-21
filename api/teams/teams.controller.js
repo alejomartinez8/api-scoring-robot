@@ -52,9 +52,11 @@ router.get('/:id', authorize(), (req, res, next) => {
 
 /** Get Teams */
 router.get('/', (req, res, next) => {
+  console.log(req.query);
   teamsService
     .getTeams(req.query)
     .then((teams) => {
+      // console.log(teams);
       res.json(teams);
     })
     .catch(next);
@@ -70,7 +72,8 @@ router.delete('/:id', authorize(), (req, res, next) => {
 
 /******** Scores **********/
 /** Add a Turn of a Team */
-router.post('/addscore/:id', authorize('Admin', 'Judge'), (req, res, next) => {
+router.post('/addscore/:id', authorize(['Admin', 'Judge']), (req, res, next) => {
+  console.log(res.body);
   teamsService
     .addScore(req.params.id, req.body)
     .then((team) => res.json(team))

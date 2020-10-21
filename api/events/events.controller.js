@@ -79,6 +79,6 @@ router.delete('/:id', authorize(Role.Admin), (req, res, next) => {
 router.put('/active/:id', (req, res, next) => {
   eventsService
     .toggleActiveEvent(req.params.id)
-    .then((team) => res.json(team))
+    .then((status) => res.json(status))
     .catch(next);
 });

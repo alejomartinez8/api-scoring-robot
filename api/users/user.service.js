@@ -79,7 +79,7 @@ async function _delete(id) {
     return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este usuario' };
   }
 
-  const user = await getUser(id);
+  let user = await getUser(id);
   if (user.role === 'Admin') {
     const users = await db.User.find({ role: 'Admin' });
     if (users.length === 1) {
@@ -89,10 +89,11 @@ async function _delete(id) {
           'No es posible eliminar el único usuario Admin de este sitio, cree otro usuario con perfil de Admin, para eliminar este usuario'
       };
     }
+  } else {
+    user = await db.User.findOneAndDelete(id);
+    if (!user) throw 'Equipo no encontrado';
+    return { type: 'delete-success', message: 'User eliminado satisfactoriamente' };
   }
-
-  await user.remove();
-  return { type: 'delete-success', message: 'User eliminado satisfactoriamente' };
 }
 
 /**
