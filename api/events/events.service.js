@@ -84,9 +84,9 @@ async function deleteEvent(id) {
   if (teams.length > 0) {
     return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este evento' };
   } else {
-    const event = await db.Event.findOneAndDelete(id);
+    const event = await db.Event.findOneAndDelete({ _id: id });
     if (!event) throw 'Evento no encontrado';
-    return { type: 'delete-success' };
+    return { type: 'delete-success', message: 'Evento Eliminado Exitosamente', event: event };
   }
 }
 

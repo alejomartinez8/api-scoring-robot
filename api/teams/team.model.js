@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'user' },
+  // user: { type: Schema.Types.ObjectId, ref: 'user' },
   event: { type: Schema.Types.ObjectId, ref: 'event' },
   challenge: { type: Schema.Types.ObjectId, ref: 'challenge' },
   category: String,

@@ -70,9 +70,8 @@ async function deleteChallenge(id) {
   if (teams.length > 0) {
     return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este reto' };
   } else {
-    const challenge = await db.Challenge.findByIdAndDelete(id);
+    const challenge = await db.Challenge.findByIdAndDelete({ _id: id });
     if (!challenge) throw 'Reto no encontrado';
-
-    return { type: 'delete-success' };
+    return { type: 'delete-success', message: 'Reto Eliminado Exitosamente', challenge: challenge };
   }
 }

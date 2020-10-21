@@ -20,6 +20,16 @@ async function addTeam(params) {
     throw `Equipo "${params.name}" ya está registrado`;
   }
 
+  if (Object.keys(params.challenge).length === 0) {
+    delete params.challenge;
+  }
+
+  if (Object.keys(params.user).length === 0) {
+    delete params.user;
+  }
+
+  console.log(params);
+
   const team = new db.Team(params);
   await team.save();
   return team;
@@ -62,9 +72,8 @@ async function registerTeam(id) {
 
 /** Get Teams */
 async function getTeams(query) {
-  const teams = await db.Team.find(query).populate('user').populate('challenge').populate('event').exec();
-  console.log(teams);
-  return teams.map((team) => team);
+  const teams = await db.Team.find(query).populate('challenge').populate('event').exec();
+  return teams;
 }
 
 /** Get Team by Id */
@@ -75,14 +84,14 @@ async function getTeamById(id) {
   return team;
 }
 
-/**Delete Team by Id */
+/****************Delete Team by Id **************/
 async function deleteTeam(id) {
   if (!db.isValidId(id)) {
     throw 'Id no válido';
   }
-
-  const team = await db.Team.findOneAndDelete(id);
+  const team = await db.Team.findOneAndDelete({ _id: id });
   if (!team) throw 'Equipo no encontrado';
+  return { type: 'delete-success', message: 'Equipo Eliminado Exitosamente', team: team };
 }
 
 /** Scores */
@@ -118,9 +127,7 @@ async function updateScore(scoreId, params) {
   }
 
   const idx = team.turns.findIndex((elm) => elm._id == scoreId);
-  console.log({ idx });
   if (idx !== -1) {
-    console.log(team.turns[idx]);
     team.turns[idx] = params;
     team.save();
     return team.turns[idx];

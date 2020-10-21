@@ -92,9 +92,8 @@ async function _delete(id) {
     }
   } else {
     const res = await user.deleteOne();
-    console.log(res);
     if (!res) throw { type: 'error', message: 'Error al borrar usuario' };
-    return { type: 'delete-success', message: 'User eliminado satisfactoriamente' };
+    return { type: 'delete-success', message: 'User eliminado satisfactoriamente', user: res };
   }
 }
 
