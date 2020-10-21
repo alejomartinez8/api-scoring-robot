@@ -25,15 +25,10 @@ passport.use(
       clientSecret: process.env.FACEBOOK_SECRET
     },
     function (accessToken, refreshToken, profile, done) {
-      try {
-        db.User.findOneOrCreateByFacebook(profile, function (err, user) {
-          if (err) console.log(err);
-          return done(err, user);
-        });
-      } catch (err2) {
-        console.log(err2);
-        return done(err2, user);
-      }
+      db.User.findOneOrCreateByFacebook(profile, function (err, user) {
+        if (err) console.log(err);
+        return done(err, user);
+      });
     }
   )
 );

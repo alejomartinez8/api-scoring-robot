@@ -101,8 +101,6 @@ async function toggleActiveEvent(id) {
     throw 'Evento no encontrado';
   }
 
-  console.log(event.active);
-
   event.active = !event.active;
   event.updated = Date.now();
   event.save();

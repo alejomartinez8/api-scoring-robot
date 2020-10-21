@@ -155,7 +155,6 @@ async function resetPassword({ token, password }) {
 }
 
 async function testEmailConfig(email) {
-  console.log(email);
   if (!email) {
     throw 'No hay dirección de correo electrónico';
   }
@@ -236,8 +235,6 @@ async function sendAlreadyRegisteredEmail(email, origin) {
  */
 
 async function sendPasswordResetEmail(user, origin) {
-  console.log('sendPasswordResetEmail');
-
   let message;
   if (origin) {
     const resetUrl = `${origin}/auth/reset-password?token=${user.resetToken.token}`;

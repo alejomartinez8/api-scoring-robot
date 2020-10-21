@@ -73,13 +73,14 @@ async function update(id, params) {
  */
 async function _delete(id) {
   if (!db.isValidId(id)) throw 'User not found';
+  console.log(id);
   const teams = await db.Team.find({ user: id });
 
   if (teams.length > 0) {
     return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este usuario' };
   }
 
-  let user = await getUser(id);
+  const user = await getUser(id);
   if (user.role === 'Admin') {
     const users = await db.User.find({ role: 'Admin' });
     if (users.length === 1) {
@@ -90,8 +91,9 @@ async function _delete(id) {
       };
     }
   } else {
-    user = await db.User.findOneAndDelete(id);
-    if (!user) throw 'Equipo no encontrado';
+    const res = await user.deleteOne();
+    console.log(res);
+    if (!res) throw { type: 'error', message: 'Error al borrar usuario' };
     return { type: 'delete-success', message: 'User eliminado satisfactoriamente' };
   }
 }

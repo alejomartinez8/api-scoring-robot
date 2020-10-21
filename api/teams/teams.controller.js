@@ -52,11 +52,9 @@ router.get('/:id', authorize(), (req, res, next) => {
 
 /** Get Teams */
 router.get('/', (req, res, next) => {
-  console.log(req.query);
   teamsService
     .getTeams(req.query)
     .then((teams) => {
-      // console.log(teams);
       res.json(teams);
     })
     .catch(next);
