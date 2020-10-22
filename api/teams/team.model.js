@@ -8,6 +8,8 @@ const teamSchema = new Schema({
   category: String,
   name: String,
   institution: String,
+  city: String,
+  country: String,
   players: [{ name: String, legalId: String, birthday: { type: Date } }],
   turns: [
     {
@@ -15,7 +17,8 @@ const teamSchema = new Schema({
       penalties: [Boolean],
       taskPoints: Number,
       bonusPoints: Number,
-      totalPoints: Number
+      totalPoints: Number,
+      judgeName: String
     }
   ],
   registered: Boolean,

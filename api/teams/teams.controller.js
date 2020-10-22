@@ -17,6 +17,8 @@ router.post(
       return next({ errors: errors.array() });
     }
 
+    // console.log(req.body);
+
     teamsService
       .addTeam(req.body)
       .then((team) => res.json(team))

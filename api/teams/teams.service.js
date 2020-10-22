@@ -24,11 +24,9 @@ async function addTeam(params) {
     delete params.challenge;
   }
 
-  if (Object.keys(params.user).length === 0) {
-    delete params.user;
-  }
-
-  console.log(params);
+  // if ('user' in params && Object.keys(params.user).length === 0) {
+  //   delete params.user;
+  // }
 
   const team = new db.Team(params);
   await team.save();
