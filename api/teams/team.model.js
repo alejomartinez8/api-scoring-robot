@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
+  name: { type: String, unique: true, required: true },
   // user: { type: Schema.Types.ObjectId, ref: 'user' },
   event: { type: Schema.Types.ObjectId, ref: 'event' },
   challenge: { type: Schema.Types.ObjectId, ref: 'challenge' },
   category: String,
-  name: String,
   institution: String,
   city: String,
   country: String,
@@ -31,7 +31,8 @@ teamSchema.virtual('turnCounter').get(function () {
 });
 
 teamSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+  versionKey: false
 });
 
 module.exports = mongoose.model('team', teamSchema);
