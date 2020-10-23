@@ -7,11 +7,7 @@ const { check, validationResult } = require('express-validator');
 
 module.exports = router;
 
-router.post(
-  '/',
-  [authorize(), [check('name', 'Nombre es requerido').not().isEmpty()], [check('event', 'Debes agregar un evento')]],
-  addTeam
-);
+router.post('/', [authorize(), [check('name', 'Nombre es requerido').not().isEmpty(), check('event', 'Debes agregar un evento')]], addTeam);
 router.post('/:id', [authorize(), [check('name', 'Nombre es requerido').not().isEmpty()]], updateTeam);
 router.put('/register/:id', registerTeam);
 router.get('/:id', authorize(), getById);
