@@ -22,9 +22,13 @@ async function addTeam(params) {
       throw `Equipo "${params.name}" ya está registrado`;
     }
 
-    if (Object.keys(params.challenge).length === 0) {
-      delete params.challenge;
+    if(await db.Event.findOne({event: params.event})){
+      throw `Error al registrar equipo, no existe el evento relacionado`
     }
+
+    // if(await db.Challenge.findOne({challenge: challenge.event})){
+    //   throw `Error al registrar equipo, no existe el evento relacionado`
+    // }
 
     const team = new db.Team(params);
     await team.save();
