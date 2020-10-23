@@ -4,112 +4,120 @@ const db = require('../../helpers/db');
 module.exports = {
   getAll,
   getById,
-  create,
-  update,
-  delete: _delete
+  addUser,
+  updateUser,
+  deleteUser
 };
 
 //Get All users
 async function getAll() {
-  const users = await db.User.find();
-  return users.map((user) => user);
+  try {
+    const users = await db.User.find();
+    return users.map((user) => user);
+  } catch (error) {
+    throw error;
+  }
 }
 
-/**
- * Get user with id
- */
+/** Get user by id */
 async function getById(id) {
-  const user = await getUser(id);
-  return user;
+  try {
+    const user = await getUser(id);
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }
 
-/**
- * Create an user
- */
-async function create(params) {
-  // validate
-  if (await db.User.findOne({ email: params.email })) {
-    throw 'Email "' + params.email + '" ya está registrado';
-  }
-
-  const user = new db.User(params);
-  user.verified = Date.now();
-
-  // hash password
-  user.passwordHash = hash(params.password);
-
-  // save user
-  await user.save();
-
-  return user;
-}
-
-/**
- * Update user by id
- */
-async function update(id, params) {
-  const user = await getUser(id);
-
-  // validate
-  if (user.email !== params.email && (await db.User.findOne({ email: params.email }))) {
-    throw 'Email "' + params.email + '" is already taken';
-  }
-
-  // hash password if it was entered
-  if (params.password) {
-    params.passwordHash = hash(params.password);
-  }
-
-  // copy params to user and save
-  Object.assign(user, params);
-  user.updated = Date.now();
-  await user.save();
-
-  return user;
-}
-
-/**
- * Delete User
- */
-async function _delete(id) {
-  if (!db.isValidId(id)) throw 'User not found';
-  console.log(id);
-  const teams = await db.Team.find({ user: id });
-
-  if (teams.length > 0) {
-    return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este usuario' };
-  }
-
-  const user = await getUser(id);
-  if (user.role === 'Admin') {
-    const users = await db.User.find({ role: 'Admin' });
-    if (users.length === 1) {
-      return {
-        type: 'admin-only',
-        message:
-          'No es posible eliminar el único usuario Admin de este sitio, cree otro usuario con perfil de Admin, para eliminar este usuario'
-      };
+/** Create an user **/
+async function addUser(params) {
+  try {
+    if (await db.User.findOne({ email: params.email })) {
+      throw 'Email "' + params.email + '" ya está registrado';
     }
-  } else {
-    const res = await user.deleteOne();
-    if (!res) throw { type: 'error', message: 'Error al borrar usuario' };
-    return { type: 'delete-success', message: 'User eliminado satisfactoriamente', user: res };
+
+    const user = new db.User(params);
+    user.verified = Date.now();
+
+    // hash password
+    user.passwordHash = bcrypt.hashSync(params.password, 10);
+
+    // save user
+    await user.save();
+
+    return user;
+  } catch (error) {
+    throw error;
   }
 }
 
-/**
- * get User with id
- */
-async function getUser(id) {
-  if (!db.isValidId(id)) throw 'User not found';
-  const user = await db.User.findById(id).select('-passwordHash');
-  if (!user) throw 'User not found';
-  return user;
+/** Update user by id **/
+async function updateUser(id, params) {
+  try {
+    const user = await getUser(id);
+    if (user.email !== params.email && (await db.User.findOne({ email: params.email }))) {
+      throw 'Email "' + params.email + '" is already taken';
+    }
+
+    if (params.password) {
+      params.passwordHash = bcrypt.hashSync(params.password, 10);
+    }
+
+    Object.assign(user, params);
+    user.updated = Date.now();
+    await user.save();
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }
 
-/**
- * Hash password with bcrypt
- */
-function hash(password) {
-  return bcrypt.hashSync(password, 10);
+/** Delete User **/
+async function deleteUser(id) {
+  try {
+    if (!db.isValidId(id)) {
+      throw 'User not found';
+    }
+
+    const teams = await db.Team.find({ user: id });
+    if (teams.length > 0) {
+      return { type: 'reference', message: 'No es posible realizar esta operación, hay que equipos asociados a este usuario' };
+    }
+
+    const user = await getUser(id);
+    if (user.role === 'Admin') {
+      const users = await db.User.find({ role: 'Admin' });
+      if (users.length === 1) {
+        return {
+          type: 'admin-only',
+          message:
+            'No es posible eliminar el único usuario Admin de este sitio, cree otro usuario con perfil de Admin, para eliminar este usuario'
+        };
+      }
+    }
+
+    const res = await user.deleteOne();
+    if (!res) {
+      throw { type: 'error', message: 'Error al borrar usuario' };
+    } else {
+      return { type: 'delete-success', message: 'User eliminado satisfactoriamente', user: res };
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+/** get User with id **/
+async function getUser(id) {
+  try {
+    if (!db.isValidId(id)) {
+      throw 'User not found';
+    }
+    const user = await db.User.findById(id).select('-passwordHash');
+    if (!user) throw 'User not found';
+    return user;
+  } catch (error) {
+    throw error;
+  }
 }

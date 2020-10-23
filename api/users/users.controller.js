@@ -6,13 +6,13 @@ const userService = require('./user.service');
 
 module.exports = router;
 
-// Users
+// Routes
 router.get('/', authorize(), getUser);
 router.get('/getAll', authorize(Role.Admin), getAll);
 router.get('/:id', authorize(), getById);
-router.post('/', authorize(Role.Admin), create);
-router.post('/:id', authorize(), update);
-router.delete('/:id', authorize(), _delete);
+router.post('/', authorize(Role.Admin), addUser);
+router.post('/:id', authorize(), updateUser);
+router.delete('/:id', authorize(), deleteUser);
 
 // Get user
 function getUser(req, res, next) {
@@ -43,22 +43,22 @@ function getById(req, res, next) {
     .catch(next);
 }
 
-// Create an User
-function create(req, res, next) {
+// Add an User
+function addUser(req, res, next) {
   userService
-    .create(req.body)
+    .addUser(req.body)
     .then((user) => res.json(user))
     .catch(next);
 }
 
 // Update user by ID
-function update(req, res, next) {
+function updateUser(req, res, next) {
   // users can update their own user and admins can update any user
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
   userService
-    .update(req.params.id, req.body)
+    .updateUser(req.params.id, req.body)
     .then((user) => res.json(user))
     .catch(next);
 }
@@ -66,14 +66,14 @@ function update(req, res, next) {
 /**
  * Delete user
  */
-function _delete(req, res, next) {
+function deleteUser(req, res, next) {
   // users can delete their own user and admins can delete any user
   if (req.params.id !== req.user.id && req.user.role !== Role.Admin) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
   userService
-    .delete(req.params.id)
+    .deleteUser(req.params.id)
     .then((response) => res.json(response))
     .catch(next);
 }
