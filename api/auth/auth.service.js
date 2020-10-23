@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const sendEmail = require('../../helpers/send-email');
 const db = require('../../helpers/db');
 const Role = require('../../helpers/role');
-const { response } = require('express');
 
 module.exports = {
   login,
