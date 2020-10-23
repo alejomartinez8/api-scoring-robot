@@ -40,16 +40,16 @@ async function addTeam(params) {
 /** Update an Team */
 async function updateTeam(id, params) {
   try {
-    if (!db.isValidId(id)) throw "Id de equipo no válido";
+    if (!db.isValidId(id)) {
+      throw "Id de equipo no válido";
+    }
+
     const team = await db.Team.findById(id);
     if (!team) {
       throw "Equipo no encontrado";
     }
 
-    if (
-      team.name !== params.name &&
-      (await db.Team.findOne({ name: params.name }))
-    ) {
+    if (await db.Team.findOne({ name: params.name })) {
       throw `Equipo "${params.name}" ya existe`;
     }
 
@@ -73,6 +73,7 @@ async function registerTeam(id) {
     if (!team) {
       throw "Equipo no encontrado";
     }
+
     team.registered = !team.registered;
     team.updated = Date.now();
     team.save();
