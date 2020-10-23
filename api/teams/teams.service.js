@@ -36,7 +36,7 @@ async function addTeam(params) {
     await team.save();
     return team;
   } catch (error) {
-    console.log(error);
+    console.log('catch', error);
     throw error;
   }
 }
