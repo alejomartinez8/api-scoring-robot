@@ -1,11 +1,11 @@
-const config = require('../../config');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
-const sendEmail = require('../../helpers/send-email');
-const db = require('../../helpers/db');
-const Role = require('../../helpers/role');
-const { response } = require('express');
+const config = require("../../config");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const sendEmail = require("../../helpers/send-email");
+const db = require("../../helpers/db");
+const Role = require("../../helpers/role");
+const { response } = require("express");
 
 module.exports = {
   login,
@@ -16,38 +16,43 @@ module.exports = {
   resetPassword,
   authGoogleToken,
   authFacebookToken,
-  testEmailConfig
+  testEmailConfig,
 };
 
 /**
  * login Service
  */
 async function login({ email, password }) {
-  const user = await db.User.findOne({ email });
+  try {
+    const user = await db.User.findOne({ email });
 
-  if (!user) {
-    throw 'Email not registered';
+    if (!user) {
+      throw "Email not registered";
+    }
+
+    if (!user.isVerified) {
+      throw "Email not verified, please check your email";
+    }
+
+    if (!bcrypt.compareSync(password, user.passwordHash)) {
+      throw "Email or password is incorrect";
+    }
+
+    // authentication successful so generate jwt and refresh tokens
+    const token = generateJwtToken(user);
+
+    // return basic details and tokens
+    return { token };
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
-
-  if (!user.isVerified) {
-    throw 'Email not verified, please check your email';
-  }
-
-  if (!bcrypt.compareSync(password, user.passwordHash)) {
-    throw 'Email or password is incorrect';
-  }
-
-  // authentication successful so generate jwt and refresh tokens
-  const token = generateJwtToken(user);
-
-  // return basic details and tokens
-  return { token };
 }
 
 /** Google Auth Token */
 async function authGoogleToken(user) {
   if (!user) {
-    throw 'Usuario Google no encontrado';
+    throw "Usuario Google no encontrado";
   }
   // authentication successful so generate jwt and refresh tokens
   const token = generateJwtToken(user);
@@ -59,7 +64,7 @@ async function authGoogleToken(user) {
 /** Facebook Auth Token */
 async function authFacebookToken(user) {
   if (!user) {
-    throw 'Usuario Facebook no encontrado';
+    throw "Usuario Facebook no encontrado";
   }
   // authentication successful so generate jwt and refresh tokens
   const token = generateJwtToken(user);
@@ -75,7 +80,7 @@ async function register(params, origin) {
   if (await db.User.findOne({ email: params.email })) {
     // send already registered error in email to prevent user enumeration
     await sendAlreadyRegisteredEmail(params.email, origin);
-    throw 'Email ya registrado, revisa tu correo electrónico para restablecer tu contraseña';
+    throw "Email ya registrado, revisa tu correo electrónico para restablecer tu contraseña";
   }
 
   // create user object
@@ -100,7 +105,7 @@ async function register(params, origin) {
 async function verifyEmail({ token }) {
   const user = await db.User.findOne({ verificationToken: token });
 
-  if (!user) throw 'Verification failed';
+  if (!user) throw "Verification failed";
 
   user.verified = Date.now();
   // user.verificationToken = undefined; //Delete Verification Token but and verified field with Date in DB
@@ -113,14 +118,14 @@ async function forgotPassword({ email }, origin) {
 
   // always return ok response to prevent email enumeration
   if (!user) {
-    console.log('email not exists');
+    console.log("email not exists");
     return;
   }
 
   // create reset token that expires after 24 hours
   user.resetToken = {
     token: randomTokenString(),
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
   };
   await user.save();
 
@@ -131,21 +136,21 @@ async function forgotPassword({ email }, origin) {
 // Find on DB the token in 'resetToken' field
 async function validateResetToken({ token }) {
   const user = await db.User.findOne({
-    'resetToken.token': token,
-    'resetToken.expires': { $gt: Date.now() }
+    "resetToken.token": token,
+    "resetToken.expires": { $gt: Date.now() },
   });
 
-  if (!user) throw 'Invalid token';
+  if (!user) throw "Invalid token";
 }
 
 // reset Password
 async function resetPassword({ token, password }) {
   const user = await db.User.findOne({
-    'resetToken.token': token,
-    'resetToken.expires': { $gt: Date.now() }
+    "resetToken.token": token,
+    "resetToken.expires": { $gt: Date.now() },
   });
 
-  if (!user) throw 'Invalid token';
+  if (!user) throw "Invalid token";
 
   // update password and delete reset token
   user.passwordHash = hash(password);
@@ -156,13 +161,13 @@ async function resetPassword({ token, password }) {
 
 async function testEmailConfig(email) {
   if (!email) {
-    throw 'No hay dirección de correo electrónico';
+    throw "No hay dirección de correo electrónico";
   }
 
   return await sendEmail({
     to: email,
-    subject: 'Correo de Prueba Scoring-Robot',
-    html: '<p>Correo de Prueba desde Scoring-Robot App</p>'
+    subject: "Correo de Prueba Scoring-Robot",
+    html: "<p>Correo de Prueba desde Scoring-Robot App</p>",
   });
 }
 
@@ -178,7 +183,7 @@ function hash(password) {
  */
 function generateJwtToken(user) {
   return jwt.sign({ id: user.id }, config.secret, {
-    expiresIn: '7d'
+    expiresIn: "7d",
   });
 }
 
@@ -186,7 +191,7 @@ function generateJwtToken(user) {
  * Get a random token of 40 bytes
  */
 function randomTokenString() {
-  return crypto.randomBytes(40).toString('hex');
+  return crypto.randomBytes(40).toString("hex");
 }
 
 // Send an Email with the verification token stored on Data Base in field verificationToken, this field is only stored when the user is not verified
@@ -203,10 +208,10 @@ async function sendVerificationEmail(user, origin) {
 
   await sendEmail({
     to: user.email,
-    subject: 'Verificación email Scoring Robot',
+    subject: "Verificación email Scoring Robot",
     html: `<h4>Verificar Email</h4>
              <p>Gracias por registrarte</p>
-             ${message}`
+             ${message}`,
   });
 }
 
@@ -223,10 +228,10 @@ async function sendAlreadyRegisteredEmail(email, origin) {
 
   await sendEmail({
     to: email,
-    subject: 'Scoring Robot - correo ya Registrado',
+    subject: "Scoring Robot - correo ya Registrado",
     html: `<h4>Email ya Registrado</h4>
                <p>Tu email <strong>${email}</strong> ya está registrado.</p>
-               ${message}`
+               ${message}`,
   });
 }
 
@@ -247,7 +252,7 @@ async function sendPasswordResetEmail(user, origin) {
 
   await sendEmail({
     to: user.email,
-    subject: 'Scoring Robot  - Restablecer Contraseña',
-    html: message
+    subject: "Scoring Robot  - Restablecer Contraseña",
+    html: message,
   });
 }
