@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authService = require('./auth.service');
+const authService = require('../services/auth.service');
 const passport = require('../../middleware/passport');
 
 module.exports = router;

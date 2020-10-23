@@ -15,10 +15,10 @@ mongoose
   .catch((error) => console.error(error));
 
 module.exports = {
-  User: require('../api/auth/user.model'),
-  Event: require('../api/events/event.model'),
-  Challenge: require('../api/challenges/challenge.model'),
-  Team: require('../api/teams/team.model'),
+  User: require('../api/models/user.model'),
+  Event: require('../api/models/event.model'),
+  Challenge: require('../api/models/challenge.model'),
+  Team: require('../api/models/team.model'),
   isValidId,
   convertToObjectId
 };
