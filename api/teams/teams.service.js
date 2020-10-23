@@ -1,5 +1,5 @@
-const db = require('../../helpers/db');
-const { param } = require('./teams.controller');
+const db = require("../../helpers/db");
+const { param } = require("./teams.controller");
 
 module.exports = {
   addTeam,
@@ -10,34 +10,43 @@ module.exports = {
   deleteTeam,
   addScore,
   updateScore,
-  deleteScore
+  deleteScore,
 };
 
 /** Add an Team */
 async function addTeam(params) {
-  // validate
-  if (await db.Team.findOne({ name: params.name })) {
-    throw `Equipo "${params.name}" ya está registrado`;
-  }
+  try {
+    console.log(params);
 
-  if (Object.keys(params.challenge).length === 0) {
-    delete params.challenge;
-  }
+    if (await db.Team.findOne({ name: params.name })) {
+      throw `Equipo "${params.name}" ya está registrado`;
+    }
 
-  const team = new db.Team(params);
-  await team.save();
-  return team;
+    if (Object.keys(params.challenge).length === 0) {
+      delete params.challenge;
+    }
+
+    const team = new db.Team(params);
+    await team.save();
+    return team;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
 
 /** Update an Team */
 async function updateTeam(id, params) {
-  if (!db.isValidId(id)) throw 'Id de equipo no válido';
+  if (!db.isValidId(id)) throw "Id de equipo no válido";
   const team = await db.Team.findById(id);
   if (!team) {
-    throw 'Equipo no encontrado';
+    throw "Equipo no encontrado";
   }
 
-  if (team.name !== params.name && (await db.Team.findOne({ name: params.name }))) {
+  if (
+    team.name !== params.name &&
+    (await db.Team.findOne({ name: params.name }))
+  ) {
     throw `Equipo "${params.name}" ya existe`;
   }
 
@@ -51,12 +60,12 @@ async function updateTeam(id, params) {
 /** Register Team */
 async function registerTeam(id) {
   if (!db.isValidId(id)) {
-    throw 'Id de equipo no válido';
+    throw "Id de equipo no válido";
   }
 
   const team = await db.Team.findById(id);
   if (!team) {
-    throw 'Equipo no encontrado';
+    throw "Equipo no encontrado";
   }
   team.registered = !team.registered;
   team.updated = Date.now();
@@ -66,26 +75,33 @@ async function registerTeam(id) {
 
 /** Get Teams */
 async function getTeams(query) {
-  const teams = await db.Team.find(query).populate('challenge').populate('event').exec();
+  const teams = await db.Team.find(query)
+    .populate("challenge")
+    .populate("event")
+    .exec();
   return teams;
 }
 
 /** Get Team by Id */
 async function getTeamById(id) {
-  if (!db.isValidId(id)) throw 'Id de equipo no válido';
+  if (!db.isValidId(id)) throw "Id de equipo no válido";
   const team = await db.Team.findById(id);
-  if (!team) throw 'Equipo no encontrado';
+  if (!team) throw "Equipo no encontrado";
   return team;
 }
 
 /****************Delete Team by Id **************/
 async function deleteTeam(id) {
   if (!db.isValidId(id)) {
-    throw 'Id no válido';
+    throw "Id no válido";
   }
   const team = await db.Team.findOneAndDelete({ _id: id });
-  if (!team) throw 'Equipo no encontrado';
-  return { type: 'delete-success', message: 'Equipo Eliminado Exitosamente', team: team };
+  if (!team) throw "Equipo no encontrado";
+  return {
+    type: "delete-success",
+    message: "Equipo Eliminado Exitosamente",
+    team: team,
+  };
 }
 
 /** Scores */
@@ -93,12 +109,12 @@ async function deleteTeam(id) {
 /** Add or Update a Turn of a Team */
 async function addScore(id, params) {
   if (!db.isValidId(id)) {
-    throw 'Id de equipo no válido';
+    throw "Id de equipo no válido";
   }
 
   const team = await db.Team.findById(id);
   if (!team) {
-    throw 'Equipo no encontrado';
+    throw "Equipo no encontrado";
   }
 
   team.turns.push(params);
@@ -112,12 +128,12 @@ async function addScore(id, params) {
 async function updateScore(scoreId, params) {
   // console.log({ scoreId }, { params });
   if (!db.isValidId(scoreId)) {
-    throw 'Id no válido';
+    throw "Id no válido";
   }
 
-  const team = await db.Team.findOne({ 'turns._id': scoreId });
+  const team = await db.Team.findOne({ "turns._id": scoreId });
   if (!team) {
-    throw 'Score no encontrado';
+    throw "Score no encontrado";
   }
 
   const idx = team.turns.findIndex((elm) => elm._id == scoreId);
@@ -131,12 +147,12 @@ async function updateScore(scoreId, params) {
 /** Delete turn/score of a Team */
 async function deleteScore(scoreId) {
   if (!db.isValidId(scoreId)) {
-    throw 'Id no válido';
+    throw "Id no válido";
   }
 
-  const team = await db.Team.findOne({ 'turns._id': scoreId });
+  const team = await db.Team.findOne({ "turns._id": scoreId });
   if (!team) {
-    throw 'Score no encontrado';
+    throw "Score no encontrado";
   }
 
   team.turns.pull(scoreId);
