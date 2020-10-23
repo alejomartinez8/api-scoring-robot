@@ -22,7 +22,7 @@ async function addTeam(params) {
       throw `Equipo "${params.name}" ya está registrado`;
     }
 
-    const event = await db.Event.findOne({ event: params.event });
+    const event = await db.Event.findOne({ _id: params.event });
     console.log(event)
     if (!event) {
       throw `Error al registrar equipo, no existe el evento relacionado`;
