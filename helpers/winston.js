@@ -26,7 +26,7 @@ const options = {
   database: {
     db: process.env.MONGODB_URI,
     options: { useUnifiedTopology: true },
-    level: (process.env.ENV = 'development' ? 'debug' : 'error')
+    level: 'error'
   }
 };
 
