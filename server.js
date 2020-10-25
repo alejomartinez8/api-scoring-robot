@@ -1,19 +1,22 @@
 ﻿const express = require('express');
 require('dotenv').config({ path: __dirname + '/.env' });
-const logger = require('morgan');
-const app = express();
+const morgan = require('morgan');
+const winston = require('./helpers/winston');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const errorHandler = require('./middleware/error-handler');
 const passport = require('./middleware/passport');
 
-if (app.get('env') === 'production') {
-  app.use(logger('combined'));
-} else {
-  app.use(logger('dev'));
-}
+const app = express();
 
+// if (app.get('env') === 'production') {
+//   app.use(morgan('combined'));
+// } else {
+//   app.use(morgan('dev'));
+// }
+
+app.use(morgan('combined', { stream: winston.stream }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());

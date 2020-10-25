@@ -23,6 +23,7 @@ async function addTeam(params) {
     if (!event) {
       throw `Error al registrar equipo, no existe el evento relacionado`;
     }
+
     const challenge = await db.Challenge.findOne({ _id: params.challenge });
     if (!challenge) {
       throw `Error al registrar equipo, no existe el challenge relacionado`;

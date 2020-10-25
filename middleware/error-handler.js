@@ -1,7 +1,10 @@
+const winston = require('../helpers/winston');
+
 module.exports = errorHandler;
 
 function errorHandler(err, req, res, next) {
-  console.log('errorHandler', err);
+  // console.log('errorHandler', err);
+  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
   switch (true) {
     case typeof err === 'string':
       // custom application error
