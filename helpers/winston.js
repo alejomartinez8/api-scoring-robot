@@ -1,14 +1,21 @@
 const appRoot = require('app-root-path');
 const winston = require('winston');
+const fs = require('fs');
 require('winston-daily-rotate-file');
 require('winston-mongodb');
 
 console.log(`${appRoot}`);
+let logDirectory = '/logs';
+
+if (!fs.existsSync(logDirectory)) {
+  console.log('no existe el directorio', logDirectory);
+  fs.mkdirSync(logDirectory);
+}
 
 const options = {
   file: {
     level: process.env.ENV === 'development' ? 'debug' : 'info',
-    filename: `${appRoot}/logs/app.log`,
+    filename: `${appRoot}${logDirectory}/%DATE%-scoring-robot-app.log`,
     datePattern: 'YYYY-MM-DD',
     zippedArchive: true,
     timestamp: true,
