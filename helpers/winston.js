@@ -1,14 +1,7 @@
 const appRoot = require('app-root-path');
 const winston = require('winston');
-const fs = require('fs');
 require('winston-daily-rotate-file');
 require('winston-mongodb');
-
-let logDirectory = '/logs';
-
-if (!fs.existsSync(logDirectory)) {
-  fs.mkdirSync(logDirectory);
-}
 
 const options = {
   file: {
