@@ -3,10 +3,12 @@ const winston = require('winston');
 require('winston-daily-rotate-file');
 require('winston-mongodb');
 
+console.log(`${appRoot}`);
+
 const options = {
   file: {
     level: process.env.ENV === 'development' ? 'debug' : 'info',
-    filename: appRoot + '/logs/%DATE%-logs.log',
+    filename: `${appRoot}/logs/app.log`,
     datePattern: 'YYYY-MM-DD',
     zippedArchive: true,
     timestamp: true,
