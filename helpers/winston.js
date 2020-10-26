@@ -3,8 +3,6 @@ const winston = require('winston');
 require('winston-daily-rotate-file');
 require('winston-mongodb');
 
-console.log(`${appRoot}`);
-
 const options = {
   file: {
     level: process.env.ENV === 'development' ? 'debug' : 'info',
@@ -28,7 +26,7 @@ const options = {
   database: {
     db: process.env.MONGODB_URI,
     options: { useUnifiedTopology: true },
-    level: 'error'
+    level: 'warn'
   }
 };
 
