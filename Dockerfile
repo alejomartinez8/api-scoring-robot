@@ -1,5 +1,5 @@
 FROM node:14
-WORKDIR /scoring-app/server
+WORKDIR /usr/src/scoring-app/server
 COPY ./package.json ./
 RUN npm install
 COPY . .
