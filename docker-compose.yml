@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  api:
+    restart: always
+    container_name: scoring-robot-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - 5000:5000
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI='mongodb://db_mongo/scoring-app'
+    links:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: db_mongo
+    environment:
+      - MONGODB_DATABASE= 'scoring-app'
+    ports:
+      - 27017:27017
+    volumes:
+      - /data/mongodb/db:/data/db

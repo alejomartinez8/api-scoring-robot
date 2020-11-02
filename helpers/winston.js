@@ -22,12 +22,12 @@ const options = {
     handleExceptions: true,
     json: false,
     colorize: true
-  },
-  database: {
-    db: process.env.MONGODB_URI,
-    options: { useUnifiedTopology: true },
-    level: 'warn'
   }
+  // database: {
+  //   db: process.env.MONGODB_URI,
+  //   options: { useUnifiedTopology: true },
+  //   level: 'warn'
+  // }
 };
 
 const logger = new winston.createLogger({
