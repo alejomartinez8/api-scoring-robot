@@ -8,10 +8,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports: 
-      - 5000:5000
+      - 5050:5050
     environment:
-      - NODE_ENV=production
+      - NODE_ENV='production'
       - MONGODB_URI='mongodb://db_mongo/scoring-app'
+      - PORT='5050'
     links:
       - mongo
 
